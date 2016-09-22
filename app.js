@@ -21,6 +21,13 @@ function setupStatics() {
 
 setupStatics();
 
+app.get('/', function (req, res) {
+
+	console.log(JSON.stringify(req));
+
+	res.send('Hello World!');
+});
+
 app.listen(80, function () {
   console.log('Listening on port 80.');
 });
