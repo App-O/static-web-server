@@ -23,7 +23,7 @@ setupStatics();
 
 app.get('/', function (req, res) {
 
-	console.log(JSON.stringify(req));
+	console.log(req);
 
 	res.send('Hello World!');
 });
