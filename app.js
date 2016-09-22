@@ -23,7 +23,7 @@ setupStatics();
 
 app.get('/', function (req, res) {
 
-	console.log(req);
+	console.log(req.subdomains);
 
 	res.send('Hello World!');
 });
