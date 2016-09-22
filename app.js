@@ -24,6 +24,7 @@ setupStatics();
 app.get('/', function (req, res) {
 
 	console.log(req.subdomains);
+	console.log('host', req.headers.host);
 
 	res.send('Hello World!');
 });
