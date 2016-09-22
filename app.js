@@ -25,6 +25,7 @@ app.get('*', function (req, res, next) {
 
 	console.log(req.subdomains);
 	console.log('host', req.headers.host);
+	console.log('headers', req.headers);
 	next();
 });
 
