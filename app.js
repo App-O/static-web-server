@@ -21,12 +21,11 @@ function setupStatics() {
 
 setupStatics();
 
-app.get('/', function (req, res) {
+app.get('*', function (req, res, next) {
 
 	console.log(req.subdomains);
 	console.log('host', req.headers.host);
-
-	res.send('Hello World!');
+	next();
 });
 
 app.listen(80, function () {
