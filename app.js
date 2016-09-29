@@ -3,6 +3,8 @@ var Path = require('path');
 var express = require('express');
 var app = express();
 var mkpath = require('yow').mkpath;
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
 
 function setupStatics() {
 	var path = Path.join(__dirname, 'www');
@@ -20,6 +22,17 @@ function setupStatics() {
 }
 
 setupStatics();
+
+io.on('connection', function (socket) {
+	socket.emit('hello', { hello: 'world' });
+
+	socket.on('join', function (data) {
+    	console.log('join', data);
+
+		if (data.room)
+			socket.join(data.room);
+	});
+});
 
 app.get('*', function (req, res, next) {
 
