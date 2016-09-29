@@ -2,8 +2,9 @@
 
 var io = require('socket.io-client');
 
-var socket = io.connect('http://130.211.79.11');
+var socket = io.connect('http://130.211.79.11:80');
 
+//var socket = io.connect('http://localhost:80');
 
 socket.on('connect', function() {
 	console.log('connected');
