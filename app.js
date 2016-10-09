@@ -15,7 +15,10 @@ var io = require('socket.io')(server);
 function setupStatics() {
 	var path = Path.join(__dirname, 'www');
 
-	app.use('/', express.static(Path.join(path, 'app-o.se')));
+	app.get('/', function (request, result) {
+		result.sendFile(Path.join(path, 'app-o.se/index.html'));
+	});
+
 
 	mkpath(path);
 
