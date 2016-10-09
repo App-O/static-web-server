@@ -15,8 +15,8 @@ var io = require('socket.io')(server);
 function setupStatics() {
 	var path = Path.join(__dirname, 'www');
 
-	app.use('/', express.static(path));
-	
+	app.use('/', express.static(Path.join(path, 'app-o.se')));
+
 	mkpath(path);
 
 	fs.readdirSync(path).forEach(function(file) {
