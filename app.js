@@ -15,10 +15,10 @@ var io = require('socket.io')(server);
 function setupStatics() {
 	var path = Path.join(__dirname, 'www');
 
-	app.get('/', function (request, result) {
-		result.sendFile(Path.join(path, 'app-o.se/index.html'));
+	app.get('/',function(req,res) {
+	    res.redirect('/app-o.se');
 	});
-
+	
 
 	mkpath(path);
 
