@@ -1,4 +1,4 @@
-
+#!/usr/bin/env node
 
 
 var fs = require('fs');
@@ -8,8 +8,23 @@ var app = express();
 var mkpath = require('yow').mkpath;
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
+var sprintf = require('yow').sprintf;
+var redirectLogs = require('yow').redirectLogs;
+var prefixLogs = require('yow').prefixLogs;
 
 
+var cmd = require('commander');
+
+
+cmd.version('1.0.0');
+cmd.option('-l --log <filename>', 'redirect logs to file');
+cmd.option('-p --port <port>', 'listens to specified port', 80);
+cmd.parse(process.argv);
+
+prefixLogs();
+
+if (cmd.log)
+	redirectLogs(cmd.log);
 
 
 function setupStatics() {
@@ -33,7 +48,7 @@ function setupStatics() {
 }
 
 setupStatics();
-
+/*
 io.on('connection', function (socket) {
 	console.log('connection!');
 	socket.emit('hello', { hello: 'world' });
@@ -45,17 +60,8 @@ io.on('connection', function (socket) {
 			socket.join(data.room);
 	});
 });
-
-/*
-app.get('*', function (req, res, next) {
-
-	console.log(req.subdomains);
-	console.log('host', req.headers.host);
-	console.log('headers', req.headers);
-	next();
-});
-
 */
-server.listen(80, function () {
-  console.log('Listening on port 80...');
+
+server.listen(cmd.port, function () {
+  console.log('Listening on port %d...', cmd.port);
 });
