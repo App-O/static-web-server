@@ -16,9 +16,9 @@ function setupStatics() {
 	var path = Path.join(__dirname, 'www');
 
 	app.get('/',function(req,res) {
-	    res.redirect('/app-o.se');
+	    res.redirect('/app-o');
 	});
-	
+
 
 	mkpath(path);
 
