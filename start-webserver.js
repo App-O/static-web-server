@@ -17,57 +17,26 @@ var cmd = require('commander');
 
 
 cmd.version('1.0.0');
-cmd.option('-l --log <filename>', 'redirect logs to file');
+cmd.option('-l --log', 'redirect logs to file');
 cmd.option('-p --port <port>', 'listens to specified port', 80);
 cmd.option('-r --root <dir>', 'specifies root path', Path.join(process.env.HOME, 'www'));
 cmd.parse(process.argv);
 
 prefixLogs();
 
-var path = cmd.root;
 
-if (cmd.log)
-	redirectLogs(cmd.log);
+if (cmd.log) {
+	var date = new Date();
+	var logFile = sprintf('%s/logs/%04d-%02d-%02d-%02d-%02d-%02d.log', __dirname, date.getFullYear(), date.getMonth() + 1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds());
 
-app.use(express.static(path));
-/*
-function setupStatics() {
-	var path = Path.join(__dirname, 'www');
-
-	app.get('/',function(req,res) {
-	    res.redirect('/app-o');
-	});
-
-
-	mkpath(path);
-
-	fs.readdirSync(path).forEach(function(file) {
-		var fileName = Path.join(path, file);
-		var stats = fs.statSync(fileName);
-
-		if (stats.isDirectory()) {
-			app.use('/' + file, express.static(Path.join(path, file)));
-		};
-	});
+	mkpath(logFile);
+	redirectLogs(logFile);
 }
 
-setupStatics();
-*/
-/*
-io.on('connection', function (socket) {
-	console.log('connection!');
-	socket.emit('hello', { hello: 'world' });
+app.use(express.static(cmd.root));
 
-	socket.on('join', function (data) {
-    	console.log('join', data);
-
-		if (data.room)
-			socket.join(data.room);
-	});
-});
-*/
 
 server.listen(cmd.port, function () {
-console.log('Root path is %s.', path);
-  console.log('Listening on port %d...', cmd.port);
+	console.log('Root path is %s.', cmd.root);
+	console.log('Listening on port %d...', cmd.port);
 });
