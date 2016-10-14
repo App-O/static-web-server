@@ -7,4 +7,4 @@ DATESTAMP=$(date +"%Y-%m-%d-%H-%M")
 exec >> ${LOCATION}/../logs/${DATESTAMP}.log
 exec 2>&1
 
-cd ${LOCATION}/.. && sudo node app.js
+cd ${LOCATION}/.. && sudo node app.js --root ~/www
