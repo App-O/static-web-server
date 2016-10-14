@@ -34,10 +34,12 @@ if (cmd.log) {
 	redirectLogs(Path.join(path, name));
 }
 
-app.use(express.static(cmd.root));
+var path = Path.resolve(cmd.root);
+
+app.use(express.static(path));
 
 
 server.listen(cmd.port, function () {
-	console.log('Root path is %s.', cmd.root);
+	console.log('Root path is %s.', path);
 	console.log('Listening on port %d...', cmd.port);
 });
