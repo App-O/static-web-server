@@ -19,7 +19,7 @@ var cmd = require('commander');
 cmd.version('1.0.0');
 cmd.option('-l --log <filename>', 'redirect logs to file');
 cmd.option('-p --port <port>', 'listens to specified port', 80);
-cmd.option('-r --root <dir>', 'specifies root path', 'www');
+cmd.option('-r --root <dir>', 'specifies root path', '~/www');
 cmd.parse(process.argv);
 
 prefixLogs();
@@ -27,9 +27,7 @@ prefixLogs();
 if (cmd.log)
 	redirectLogs(cmd.log);
 
-var path = Path.join(__dirname, cmd.root);
-
-app.use(express.static(path));
+app.use(express.static(cmd.root));
 /*
 function setupStatics() {
 	var path = Path.join(__dirname, 'www');
@@ -68,6 +66,6 @@ io.on('connection', function (socket) {
 */
 
 server.listen(cmd.port, function () {
-console.log('Root path is %s.', path);
+console.log('Root path is %s.', cmd.root);
   console.log('Listening on port %d...', cmd.port);
 });
