@@ -19,7 +19,7 @@ var cmd = require('commander');
 cmd.version('1.0.0');
 cmd.option('-l --log <filename>', 'redirect logs to file');
 cmd.option('-p --port <port>', 'listens to specified port', 80);
-cmd.option('-r --root <dir>', 'specifies root path', '~/www');
+cmd.option('-r --root <dir>', 'specifies root path', Path.join(process.env.HOME, 'www'));
 cmd.parse(process.argv);
 
 prefixLogs();
