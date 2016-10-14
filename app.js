@@ -24,7 +24,7 @@ cmd.parse(process.argv);
 
 prefixLogs();
 
-var path = Path.resolve(cmd.root);
+var path = cmd.root;
 
 if (cmd.log)
 	redirectLogs(cmd.log);
