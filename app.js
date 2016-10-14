@@ -24,10 +24,12 @@ cmd.parse(process.argv);
 
 prefixLogs();
 
+var path = Path.resolve(cmd.root);
+
 if (cmd.log)
 	redirectLogs(cmd.log);
 
-app.use(express.static(cmd.root));
+app.use(express.static(path));
 /*
 function setupStatics() {
 	var path = Path.join(__dirname, 'www');
@@ -66,6 +68,6 @@ io.on('connection', function (socket) {
 */
 
 server.listen(cmd.port, function () {
-console.log('Root path is %s.', cmd.root);
+console.log('Root path is %s.', path);
   console.log('Listening on port %d...', cmd.port);
 });
