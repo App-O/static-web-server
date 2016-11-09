@@ -12,33 +12,48 @@ var sprintf = require('yow').sprintf;
 var redirectLogs = require('yow').redirectLogs;
 var prefixLogs = require('yow').prefixLogs;
 
+var App = function(argv) {
 
-var cmd = require('commander');
+	argv = parseArgs();
+	
+	function parseArgs() {
+
+		var args = require('yargs');
+
+		args.usage('Usage: $0 [options]');
+		args.help('h').alias('h', 'help');
+
+		args.option('p', {alias:'port', describe:'Listen to specified port', default:80});
+		args.option('r', {alias:'root', describe:'Specifies root path', default:'www'});
+
+		args.wrap(null);
+
+		args.check(function(argv) {
+			return true;
+		});
+
+		return args.argv;
+	}
 
 
-cmd.version('1.0.0');
-cmd.option('-l --log', 'redirect logs to file');
-cmd.option('-p --port <port>', 'listens to specified port', 80);
-cmd.option('-r --root <dir>', 'specifies root path', 'www');
-cmd.parse(process.argv);
+	function run() {
 
-prefixLogs();
+		parseArgs();
+		prefixLogs();
+
+		var path = Path.resolve(argv.root);
+
+		app.use(express.static(path));
+
+		server.listen(argv.port, function () {
+			console.log('Root path is %s.', path);
+			console.log('Listening on port %d...', argv.port);
+		});
+
+	}
+
+	run();
+};
 
 
-if (cmd.log) {
-	var date = new Date();
-	var path = sprintf('%s/logs', __dirname);
-	var name = sprintf('%04d-%02d-%02d-%02d-%02d-%02d.log', date.getFullYear(), date.getMonth() + 1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds());
-
-	mkpath(path);
-	redirectLogs(Path.join(path, name));
-}
-
-var path = Path.resolve(cmd.root);
-
-app.use(express.static(path));
-
-server.listen(cmd.port, function () {
-	console.log('Root path is %s.', path);
-	console.log('Listening on port %d...', cmd.port);
-});
+new App();
