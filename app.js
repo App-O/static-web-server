@@ -15,7 +15,7 @@ var prefixLogs = require('yow').prefixLogs;
 var App = function(argv) {
 
 	argv = parseArgs();
-	
+
 	function parseArgs() {
 
 		var args = require('yargs');
