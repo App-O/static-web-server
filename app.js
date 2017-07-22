@@ -45,10 +45,41 @@ var App = function(argv) {
 
 		app.use(express.static(path));
 
+		io.on('connection', function (socket) {
+
+			console.log('SocketIO connection!');
+
+			socket.on('join', function(data) {
+				console.log('Join message', data);
+				socket.join(data.room);
+			});
+
+			socket.on('leave', function(data) {
+				console.log('Leave message', data);
+				socket.leave(data.room);
+			});
+
+			socket.on('broadcast', function(data) {
+				console.log('Broadcast message', data);
+
+				if (data.room == undefined)
+					console.log('No room specified!');
+				else if (data.event == undefined)
+					console.log('No event specified!');
+				else if (data.data == undefined)
+					console.log('No data specified!');
+				else {
+					socket.to(data.room).emit(data.event, data.data);
+				}
+			});
+		});
+
 		server.listen(argv.port, function () {
 			console.log('Root path is %s.', path);
 			console.log('Listening on port %d...', argv.port);
+
 		});
+
 
 	}
 
