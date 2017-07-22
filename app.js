@@ -48,6 +48,8 @@ var App = function(argv) {
 		io.on('connection', function (socket) {
 
 			console.log('SocketIO connection!');
+			
+			socket.emit('hello', {});
 
 			socket.on('join', function(data) {
 				console.log('Join message', data);
