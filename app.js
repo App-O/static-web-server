@@ -47,9 +47,13 @@ var App = function(argv) {
 
 		io.on('connection', function (socket) {
 
-			console.log('SocketIO connection!');
-			
+			console.log('SocketIO connection from', socket.id);
+
 			socket.emit('hello', {});
+
+			socket.on('disconnect', function() {
+				console.log('Disconnect from', socket.id);
+			});
 
 			socket.on('join', function(data) {
 				console.log('Join message', data);
