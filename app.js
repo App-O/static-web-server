@@ -58,16 +58,13 @@ var App = function(argv) {
 
 				console.log('Posting event', event, 'to room', room, 'message', message);
 
-				message = JSON.parse(message);
-
-
 				io.sockets.to(room).emit(event, { room: room, message: message });
 				response.status(200).json({status:'OK'});
 
 			}
 			catch(error) {
 				console.log('Posting failed', error);
-				response.status(401).json({status:'#ERROR#'});
+				response.status(401).json({error:error.message});
 
 			}
 		});
