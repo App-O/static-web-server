@@ -58,7 +58,7 @@ var App = function(argv) {
 
 				console.log('Posting event', event, 'to room', room, 'message', message);
 
-				io.sockets.to(room).emit(event, { room: room, message: message });
+				io.sockets.to(room).emit(event, message);
 				response.status(200).json({status:'OK'});
 
 			}
