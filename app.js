@@ -46,6 +46,7 @@ var App = function(argv) {
 		var path = Path.resolve(argv.root);
 
 		app.use(express.static(path));
+		/*
 		app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
 		app.use(bodyParser.json({limit: '50mb'}));
 
@@ -68,7 +69,7 @@ var App = function(argv) {
 
 			}
 		});
-
+*/
 		io.on('connection', function (socket) {
 
 			console.log('SocketIO connection from', socket.id);
