@@ -49,16 +49,16 @@ var App = function(argv) {
 		app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
 		app.use(bodyParser.json({limit: '50mb'}));
 
-		app.post('/broadcast/:room/:event', function(request, response) {
+		app.post('/send/:room/:message', function(request, response) {
 
 			try {
-				var room = request.params.room;
-				var event = request.params.event;
-				var message = request.body;
+				var room    = request.params.room;
+				var message = request.params.message;
+				var context = request.body;
 
-				console.log('Posting event', event, 'to room', room, 'message', message);
+				console.log('Posting message', message, 'to room', room, 'context', context);
 
-				io.sockets.to(room).emit(event, message);
+				io.sockets.to(room).emit(message, context);
 				response.status(200).json({status:'OK'});
 
 			}
@@ -89,17 +89,19 @@ var App = function(argv) {
 				socket.leave(data.room);
 			});
 
-			socket.on('broadcast', function(data) {
-				console.log('Broadcast message', data);
+			socket.on('send', function(data) {
+				console.log('Send message', data);
+
+				var room    = data.room;
+				var message = data.message;
+				var context = data.context;
 
 				if (data.room == undefined)
 					console.log('No room specified!');
-				else if (data.event == undefined)
-					console.log('No event specified!');
 				else if (data.message == undefined)
-					console.log('No data specified!');
+					console.log('No message specified!');
 				else {
-					socket.to(data.room).emit(data.event, data.message);
+					socket.to(room).emit(message, context);
 				}
 			});
 		});
