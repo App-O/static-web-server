@@ -50,9 +50,12 @@ var App = function(argv) {
 			try {
 				var room = request.params.room;
 				var event = request.params.event;
-				var message = JSON.parse(request.body);
+				var message = request.body;
 
 				console.log('Posting event', event, 'to room', room, 'message', message);
+
+				message = JSON.parse(message);
+
 
 				io.sockets.to(room).emit(event, { room: room, message: message });
 				response.status(200).json({status:'OK'});
