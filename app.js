@@ -79,9 +79,7 @@ var App = function(argv) {
 
 				console.log('Posting message', message, 'to room', room, 'context', context);
 
-				io.sockets.to(room).emit(message, context, function(data) {
-					console.log('foo called', data);
-				});
+				io.sockets.to(room).emit(message, context);
 				response.status(200).json({status:'OK'});
 
 			}
