@@ -90,7 +90,7 @@ var App = function(argv) {
 				socket.leave(data.room);
 			});
 
-			socket.on('message', function(data) {
+			socket.on('broadcast', function(data) {
 				console.log('Send message', data);
 
 				var room    = data.room;
