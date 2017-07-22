@@ -70,6 +70,27 @@ var App = function(argv) {
 			}
 		});
 
+		app.post('/broadcast/:room/:message', function(request, response) {
+
+			try {
+				var room    = request.params.room;
+				var message = request.params.message;
+				var context = request.body;
+
+				console.log('Posting message', message, 'to room', room, 'context', context);
+
+				io.sockets.to(room).emit(message, context);
+				response.status(200).json({status:'OK'});
+
+			}
+			catch(error) {
+				console.log('Posting failed', error);
+				response.status(401).json({error:error.message});
+
+			}
+		});
+
+
 		io.on('connection', function (socket) {
 
 			console.log('SocketIO connection from', socket.id);
