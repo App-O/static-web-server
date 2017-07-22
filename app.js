@@ -45,6 +45,23 @@ var App = function(argv) {
 
 		app.use(express.static(path));
 
+		app.post('/broadcast/:room/:event', function(request, response) {
+
+			try {
+				var room = request.params.room;
+				var event = request.params.event;
+				var message = JSON.parse(request.body);
+
+				io.sockets.to(room).emit(event, { room: room, message: message });
+				response.status(200).json({status:'OK'});
+
+			}
+			catch(error) {
+				response.status(401).json({status:'#ERROR#'});
+
+			}
+		});
+
 		io.on('connection', function (socket) {
 
 			console.log('SocketIO connection from', socket.id);
@@ -72,10 +89,10 @@ var App = function(argv) {
 					console.log('No room specified!');
 				else if (data.event == undefined)
 					console.log('No event specified!');
-				else if (data.data == undefined)
+				else if (data.message == undefined)
 					console.log('No data specified!');
 				else {
-					socket.to(data.room).emit(data.event, data.data);
+					socket.to(data.room).emit(data.event, data.message);
 				}
 			});
 		});
