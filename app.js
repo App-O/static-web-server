@@ -11,6 +11,8 @@ var io = require('socket.io')(server);
 var sprintf = require('yow').sprintf;
 var redirectLogs = require('yow').redirectLogs;
 var prefixLogs = require('yow').prefixLogs;
+var bodyParser = require('body-parser');
+var cors = require('cors');
 
 var App = function(argv) {
 
@@ -44,6 +46,8 @@ var App = function(argv) {
 		var path = Path.resolve(argv.root);
 
 		app.use(express.static(path));
+		app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
+		app.use(bodyParser.json({limit: '50mb'}));
 
 		app.post('/broadcast/:room/:event', function(request, response) {
 
