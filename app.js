@@ -46,7 +46,7 @@ var App = function(argv) {
 		var path = Path.resolve(argv.root);
 
 		app.use(express.static(path));
-		
+
 		app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
 		app.use(bodyParser.json({limit: '50mb'}));
 
@@ -90,7 +90,7 @@ var App = function(argv) {
 				socket.leave(data.room);
 			});
 
-			socket.on('send', function(data) {
+			socket.on('message', function(data) {
 				console.log('Send message', data);
 
 				var room    = data.room;
