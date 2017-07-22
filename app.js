@@ -49,7 +49,7 @@ var App = function(argv) {
 		app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
 		app.use(bodyParser.json({limit: '50mb'}));
 
-		app.post('/send/:room/:message', function(request, response) {
+		app.post('/sockets/emit/:room/:message', function(request, response) {
 
 			try {
 				var room    = request.params.room;
@@ -76,16 +76,16 @@ var App = function(argv) {
 			socket.emit('hello', {});
 
 			socket.on('disconnect', function() {
-				console.log('Disconnect from', socket.id);
+				console.log('Disconnect from socket', socket.id);
 			});
 
 			socket.on('join', function(data) {
-				console.log('Join message', data);
+				console.log('Socket', socket.id, 'joined room', data.room);
 				socket.join(data.room);
 			});
 
 			socket.on('leave', function(data) {
-				console.log('Leave message', data);
+				console.log('Socket', socket.id, 'left room', data.room);
 				socket.leave(data.room);
 			});
 
