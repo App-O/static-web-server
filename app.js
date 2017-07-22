@@ -52,11 +52,14 @@ var App = function(argv) {
 				var event = request.params.event;
 				var message = JSON.parse(request.body);
 
+				console.log('Posting event', event, 'to room', room, 'message', message);
+
 				io.sockets.to(room).emit(event, { room: room, message: message });
 				response.status(200).json({status:'OK'});
 
 			}
 			catch(error) {
+				console.log('Posting failed', error);
 				response.status(401).json({status:'#ERROR#'});
 
 			}
