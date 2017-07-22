@@ -49,7 +49,7 @@ var App = function(argv) {
 		app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
 		app.use(bodyParser.json({limit: '50mb'}));
 
-		app.post('/sockets/broadcast/:room/:message', function(request, response) {
+		app.post('/sockets/to/:room/emit/:message', function(request, response) {
 
 			try {
 				var room    = request.params.room;
