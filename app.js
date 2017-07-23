@@ -44,6 +44,7 @@ var App = function(argv) {
 		prefixLogs();
 
 		var path = Path.resolve(argv.root);
+		var services = [];
 
 		app.use(express.static(path));
 
@@ -93,6 +94,7 @@ var App = function(argv) {
 
 		io.on('connection', function (socket) {
 
+
 			console.log('SocketIO connection from', socket.id);
 
 			socket.emit('hello', {});
@@ -101,9 +103,13 @@ var App = function(argv) {
 				console.log('Disconnect from socket', socket.id);
 			});
 
+
 			socket.on('join', function(data) {
 				console.log('Socket', socket.id, 'joined room', data.room);
 				socket.join(data.room);
+				io.in(data.room).clients(function(error, clients) {
+					console.log('Clients in room', data.room, clients);
+				});
 			});
 
 			socket.on('leave', function(data) {
