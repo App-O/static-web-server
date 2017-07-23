@@ -91,9 +91,6 @@ var App = function(argv) {
 						socket.emit(message, context, function(data) {
 							try {
 								if (timer != undefined) {
-									console.log('reply', data);
-									console.log('reply', error);
-
 									clearTimeout(timer);
 
 									if (data.error)
