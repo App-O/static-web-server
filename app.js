@@ -195,6 +195,7 @@ var App = function(argv) {
 				});
 
 				services.push(service);
+				console.log('Service count', services.length);
 			});
 
 
@@ -203,6 +204,7 @@ var App = function(argv) {
 				console.log('Invoking service', name, message, data);
 
 				var service = services.find(function(service) {
+					console.log(service.name);
 					return service.name == name;
 				});
 
