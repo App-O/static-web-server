@@ -71,6 +71,31 @@ var App = function(argv) {
 			}
 		});
 
+		app.post('/service/:room/:message', function(request, response) {
+
+			try {
+				var room    = request.params.room;
+				var message = request.params.message;
+				var context = request.body;
+
+				console.log('Service message', message, 'to room', room, 'context', context);
+
+				io.sockets.in(room).clients(function(error, clients) {
+					var client = clients[0];
+					io.to(client.id).emit(message, context, function(data) {
+						console.log('reply', data);
+						response.status(200).json({status:'OK'});
+					});
+				});
+
+
+			}
+			catch(error) {
+				console.log('Posting failed', error);
+				response.status(401).json({error:error.message});
+
+			}
+		});
 		app.post('/broadcast/:room/:message', function(request, response) {
 
 			try {
