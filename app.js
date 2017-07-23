@@ -82,10 +82,14 @@ var App = function(argv) {
 
 				io.sockets.in(room).clients(function(error, clients) {
 					var socket = io.sockets.connected[clients[0]];
-					socket.emit(message, context, function(data) {
-						console.log('reply', data);
-						response.status(200).json({status:'OK'});
-					});
+
+					if (socket != undefined) {
+						socket.emit(message, context, function(data) {
+							console.log('reply', data);
+							response.status(200).json(data);
+						});
+
+					}
 				});
 
 
