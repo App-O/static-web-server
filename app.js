@@ -198,7 +198,7 @@ var App = function(argv) {
 			});
 
 
-			socket.on('post', function(name, message, data) {
+			socket.on('invoke', function(name, message, data) {
 
 				var service = services.find(function(service) {
 					return service.name == name;
