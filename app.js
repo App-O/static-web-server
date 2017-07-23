@@ -223,6 +223,7 @@ var App = function(argv) {
 					})
 				}
 				else {
+					fn({error:'Service not found'});
 					console.log('Service', name, 'not found');
 				}
 			});
