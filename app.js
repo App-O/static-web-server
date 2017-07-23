@@ -14,7 +14,7 @@ var prefixLogs = require('yow').prefixLogs;
 var bodyParser = require('body-parser');
 var cors = require('cors');
 
-var Service = new function(socket, name, timeout) {
+var Service = function(socket, name, timeout) {
 
 	var _this = this;
 
