@@ -110,7 +110,7 @@ var App = function(argv) {
 							response.status(200).json(result);
 						})
 						.catch(function(error) {
-							throw error;
+							response.status(401).json({error:error.message});
 						});
 
 /*						var timer = undefined;
