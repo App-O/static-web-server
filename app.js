@@ -89,15 +89,22 @@ var App = function(argv) {
 						}
 
 						socket.emit(message, context, function(data) {
-							console.log('reply', data);
-							console.log('reply', error);
+							try {
+								if (timer != undefined) {
+									console.log('reply', data);
+									console.log('reply', error);
 
-							if (timer != undefined) {
-								clearTimeout(timer);
-								if (data.error)
-									reject(new Error(data.error));
-								else
-									resolve(data);
+									clearTimeout(timer);
+
+									if (data.error)
+										throw new Error(data.error);
+									else
+										resolve(data);
+
+								}
+							}
+							catch(error) {
+								reject(error);
 							}
 						});
 
