@@ -80,14 +80,13 @@ var App = function(argv) {
 
 				function emit(socket, message, context) {
 					return new Promise(function(resolve, reject) {
-						var timer = undefined;
+
+						var timer = setTimeout(timeout, 5000);
 
 						function timeout() {
 							timer = undefined;
-							reject(new Error('Timeout'));
+							reject(new Error('Timeout X'));
 						}
-
-						timer = setTimeout(timeout, 5000);
 
 						socket.emit(message, context, function(data) {
 							if (timer != undefined) {
@@ -113,23 +112,6 @@ var App = function(argv) {
 							response.status(401).json({error:error.message});
 						});
 
-/*						var timer = undefined;
-
-						function timeout() {
-							timer = undefined;
-							response.status(401).json({error:'Timeout'});
-						}
-
-						timer = setTimeout(timeout, 5000);
-
-						socket.emit(message, context, function(data) {
-							if (timer != undefined) {
-								clearTimeout(timer);
-								console.log('reply', data);
-								response.status(200).json(data);
-							}
-						});
-*/
 					}
 				});
 
