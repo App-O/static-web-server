@@ -78,6 +78,27 @@ var App = function(argv) {
 				var message = request.params.message;
 				var context = request.body;
 
+				function emit(socket, message, context) {
+					return new Promise(function(resolve, reject) {
+						var timer = undefined;
+
+						function timeout() {
+							timer = undefined;
+							reject(new Error('Timeout'));
+						}
+
+						timer = setTimeout(timeout, 5000);
+
+						socket.emit(message, context, function(data) {
+							if (timer != undefined) {
+								clearTimeout(timer);
+								resolve(data);
+							}
+						});
+
+					});
+				}
+
 				console.log('Service message', message, 'to room', room, 'context', context);
 
 				io.sockets.in(room).clients(function(error, clients) {
@@ -85,7 +106,14 @@ var App = function(argv) {
 
 					if (socket != undefined) {
 
-						var timer = undefined;
+						emit(socket, message, context).then(function(result) {
+							response.status(200).json(result);
+						})
+						.catch(function(error) {
+							throw error;
+						});
+
+/*						var timer = undefined;
 
 						function timeout() {
 							timer = undefined;
@@ -101,7 +129,7 @@ var App = function(argv) {
 								response.status(200).json(data);
 							}
 						});
-
+*/
 					}
 				});
 
@@ -153,6 +181,8 @@ var App = function(argv) {
 					console.log('Clients in room', data.room, clients);
 				});
 			});
+
+
 
 			socket.on('leave', function(data) {
 				console.log('Socket', socket.id, 'left room', data.room);
