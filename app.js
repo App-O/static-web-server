@@ -164,8 +164,7 @@ var App = function(argv) {
 				console.log('Disconnect from socket', socket.id);
 
 				services = services.filter(function(service) {
-					console.log(service.id, socket.id);
-					service.id != socket.id;
+					return service.id != socket.id;
 				});
 
 				console.log('Service count', services.length);
@@ -194,7 +193,7 @@ var App = function(argv) {
 				var service = new Service(socket, data.name, data.timeout);
 
 				services = services.filter(function(service) {
-					service.id != socket.id;
+					return service.id != socket.id;
 				});
 
 				services.push(service);
