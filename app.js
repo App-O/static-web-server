@@ -169,12 +169,20 @@ var App = function(argv) {
 			});
 
 
-			socket.on('join', function(data) {
-				console.log('Socket', socket.id, 'joined room', data.room);
-				socket.join(data.room);
-				io.in(data.room).clients(function(error, clients) {
-					console.log('Clients in room', data.room, clients);
-				});
+			socket.on('join', function(room) {
+				console.log('Socket', socket.id, 'joined room', room);
+				socket.join(room);
+			});
+
+			socket.on('leave', function(room) {
+				console.log('Socket', socket.id, 'left room', room);
+				socket.leave(room);
+			});
+
+			socket.on('broadcast', function(room, message, data) {
+				console.log('Broadcast message', room, message, data);
+
+				socket.to(room).emit(message, data);
 			});
 
 			socket.on('service', function(data) {
@@ -200,16 +208,6 @@ var App = function(argv) {
 					service.socket.emit(message, data);
 			});
 
-			socket.on('leave', function(data) {
-				console.log('Socket', socket.id, 'left room', data.room);
-				socket.leave(data.room);
-			});
-
-			socket.on('broadcast', function(room, message, data) {
-				console.log('Broadcast message', room, message, data);
-
-				socket.to(room).emit(message, data);
-			});
 		});
 
 		server.listen(argv.port, function () {
