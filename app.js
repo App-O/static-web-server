@@ -23,6 +23,8 @@ var Service = function(socket, name, timeout) {
 	_this.id      = socket.id;
 	_this.timeout = timeout == undefined ? 5000 : timeout;
 
+	console.log('New service', _this.name, _this.id);
+	
 	_this.emit = function(message, context) {
 		return new Promise(function(resolve, reject) {
 
