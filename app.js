@@ -213,13 +213,13 @@ var App = function(argv) {
 				if (service != undefined) {
 					service.emit(message, data).then(function(data) {
 						if (isFunction(fn))
-							fn(data, undefined);
+							fn(data);
 					})
 					.catch(function(error) {
 						console.log(error);
 
 						if (isFunction(fn))
-							fn({}, error.message);
+							fn({error:error.message});
 					})
 				}
 				else {
