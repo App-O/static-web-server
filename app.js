@@ -14,6 +14,48 @@ var prefixLogs = require('yow').prefixLogs;
 var bodyParser = require('body-parser');
 var cors = require('cors');
 
+var Service = new function(socket, name, timeout) {
+
+	var _this = this;
+
+	_this.name    = name;
+	_this.socket  = socket;
+	_this.id      = socket.id;
+	_this.timeout = timeout == undefined ? 5000 : timeout;
+
+	_this.emit = function(message, context) {
+		return new Promise(function(resolve, reject) {
+
+			var timer = setTimeout(expired, _this.timeout);
+
+			function expired() {
+				timer = undefined;
+				reject(new Error(sprintf('Timeout emitting event \'%s\'', message)));
+			}
+
+			_this.socket.emit(message, context, function(data) {
+				try {
+					if (timer != undefined) {
+						clearTimeout(timer);
+
+						if (data.error)
+							throw new Error(data.error);
+						else
+							resolve(data);
+
+					}
+				}
+				catch(error) {
+					reject(error);
+				}
+			});
+
+		});
+	}
+};
+
+
+
 var App = function(argv) {
 
 	argv = parseArgs();
@@ -37,35 +79,6 @@ var App = function(argv) {
 		return args.argv;
 	}
 
-	function emit(socket, message, context) {
-		return new Promise(function(resolve, reject) {
-
-			var timer = setTimeout(timeout, 5000);
-
-			function timeout() {
-				timer = undefined;
-				reject(new Error(sprintf('Timeout emitting event \'%s\'', message)));
-			}
-
-			socket.emit(message, context, function(data) {
-				try {
-					if (timer != undefined) {
-						clearTimeout(timer);
-
-						if (data.error)
-							throw new Error(data.error);
-						else
-							resolve(data);
-
-					}
-				}
-				catch(error) {
-					reject(error);
-				}
-			});
-
-		});
-	}
 
 	function run() {
 
@@ -80,64 +93,12 @@ var App = function(argv) {
 		app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
 		app.use(bodyParser.json({limit: '50mb'}));
 
-		app.post('/sockets/to/:room/emit/:message', function(request, response) {
+
+
+		app.post('/service/:name/:message', function(request, response) {
 
 			try {
-				var room    = request.params.room;
-				var message = request.params.message;
-				var context = request.body;
 
-				console.log('Posting message', message, 'to room', room, 'context', context);
-
-				io.sockets.to(room).emit(message, context);
-				response.status(200).json({status:'OK'});
-
-			}
-			catch(error) {
-				console.log('Posting failed', error);
-				response.status(401).json({error:error.message});
-
-			}
-		});
-
-		app.post('/service/:room/:message', function(request, response) {
-
-			try {
-				var room    = request.params.room;
-				var message = request.params.message;
-				var context = request.body;
-
-
-
-				console.log('Service message', message, 'to room', room, 'context', context);
-
-				io.sockets.in(room).clients(function(error, clients) {
-					var socket = io.sockets.connected[clients[0]];
-
-					if (socket != undefined) {
-
-						emit(socket, message, context).then(function(result) {
-							response.status(200).json(result);
-						})
-						.catch(function(error) {
-							response.status(401).json({error:error.message});
-						});
-
-					}
-				});
-
-
-			}
-			catch(error) {
-				console.log('Posting failed', error);
-				response.status(401).json({error:error.message});
-
-			}
-		});
-
-		app.post('/services/:name/:message', function(request, response) {
-
-			try {
 				var name    = request.params.name;
 				var message = request.params.message;
 				var context = request.body;
@@ -149,7 +110,7 @@ var App = function(argv) {
 				});
 
 				if (service) {
-					emit(service.socket, message, context).then(function(result) {
+					service.emit(message, context).then(function(result) {
 						response.status(200).json(result);
 					})
 					.catch(function(error) {
@@ -219,10 +180,7 @@ var App = function(argv) {
 			socket.on('service', function(data) {
 				console.log('Socket', socket.id, 'registerred service', data.name);
 
-				var service = {};
-				service.id     = socket.id;
-				service.name   = data.name;
-				service.socket = socket;
+				var service = new Service(socket, data.name, data.timeout);
 
 				services = services.filter(function(service) {
 					service.id != socket.id;
