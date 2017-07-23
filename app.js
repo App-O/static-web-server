@@ -212,7 +212,7 @@ var App = function(argv) {
 				});
 
 				if (service != undefined) {
-					service.socket.emit(message, data).then(function(data) {
+					service.emit(message, data).then(function(data) {
 						if (isFunction(fn))
 							fn(data);
 					})
