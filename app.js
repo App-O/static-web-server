@@ -81,8 +81,8 @@ var App = function(argv) {
 				console.log('Service message', message, 'to room', room, 'context', context);
 
 				io.sockets.in(room).clients(function(error, clients) {
-					var client = clients[0];
-					io.to(client.id).emit(message, context, function(data) {
+					var socket = io.sockets.connected[clients[0]];
+					socket.emit(message, context, function(data) {
 						console.log('reply', data);
 						response.status(200).json({status:'OK'});
 					});
