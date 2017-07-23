@@ -207,7 +207,6 @@ var App = function(argv) {
 				console.log('Invoking service', name, message, data);
 
 				var service = services.find(function(service) {
-					console.log(service.name);
 					return service.name == name;
 				});
 
@@ -218,6 +217,9 @@ var App = function(argv) {
 					})
 					.catch(function(error) {
 						console.log(error);
+
+						if (isFunction(fn))
+							fn({error:error.message});
 					})
 				}
 				else {
