@@ -9,6 +9,7 @@ var mkpath = require('yow').mkpath;
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var sprintf = require('yow').sprintf;
+var isFunction = require('yow/is').isFunction;
 var redirectLogs = require('yow').redirectLogs;
 var prefixLogs = require('yow').prefixLogs;
 var bodyParser = require('body-parser');
@@ -201,7 +202,7 @@ var App = function(argv) {
 			});
 
 
-			socket.on('invoke', function(name, message, data) {
+			socket.on('invoke', function(name, message, data, fn) {
 
 				console.log('Invoking service', name, message, data);
 
@@ -210,8 +211,15 @@ var App = function(argv) {
 					return service.name == name;
 				});
 
-				if (service != undefined)
-					service.socket.emit(message, data);
+				if (service != undefined) {
+					service.socket.emit(message, data).then(function(data) {
+						if (isFunction(fn))
+							fn(data);
+					})
+					.catch(function(error) {
+						console.log(error);
+					})
+				}
 				else {
 					console.log('Service', name, 'not found');
 				}
