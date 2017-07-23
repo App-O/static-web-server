@@ -145,7 +145,7 @@ var App = function(argv) {
 				console.log('Service message', message, 'to service', name, 'context', context);
 
 				var service = services.find(function(service) {
-					service.name == name;
+					return service.name == name;
 				});
 
 				if (service) {
