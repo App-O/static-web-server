@@ -144,22 +144,21 @@ var App = function(argv) {
 
 				console.log('Service message', message, 'to service', name, 'context', context);
 
-				for (var index = 0; index < services.length; index++) {
-					var service = services[index];
+				var service = services.find(function(service) {
+					service.name == name;
+				});
 
-					if (service.name == name) {
-						emit(service.socket, message, context).then(function(result) {
-							response.status(200).json(result);
-						})
-						.catch(function(error) {
-							response.status(401).json({error:error.message});
-						});
+				if (service) {
+					emit(service.socket, message, context).then(function(result) {
+						response.status(200).json(result);
+					})
+					.catch(function(error) {
+						response.status(401).json({error:error.message});
+					});
 
-						return;
-					}
 				}
-
-				throw Error('Service not found');
+				else
+					throw Error('Service not found');
 
 			}
 			catch(error) {
