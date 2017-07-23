@@ -86,11 +86,11 @@ var App = function(argv) {
 					if (socket != undefined) {
 
 						function timeout() {
-							response.status(401).json({error:'Timeout'}});
+							response.status(401).json({error:'Timeout'});
 						}
 
 						var timer = setTimeout(timeout, 5000);
-						
+
 						socket.emit(message, context, function(data) {
 							clearTimeout(timer);
 							console.log('reply', data);
