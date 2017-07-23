@@ -200,12 +200,17 @@ var App = function(argv) {
 
 			socket.on('invoke', function(name, message, data) {
 
+				console.log('Invoking service', name, message, data);
+
 				var service = services.find(function(service) {
 					return service.name == name;
 				});
 
 				if (service != undefined)
 					service.socket.emit(message, data);
+				else {
+					console.log('Service', name, 'not found');
+				}
 			});
 
 		});
