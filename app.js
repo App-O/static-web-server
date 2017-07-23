@@ -190,25 +190,25 @@ var App = function(argv) {
 			});
 
 
+			socket.on('post', function(name, message, data) {
+
+				var service = services.find(function(service) {
+					return service.name == name;
+				});
+
+				if (service != undefined)
+					service.socket.emit(message, data);
+			});
+
 			socket.on('leave', function(data) {
 				console.log('Socket', socket.id, 'left room', data.room);
 				socket.leave(data.room);
 			});
 
-			socket.on('broadcast', function(data) {
-				console.log('Send message', data);
+			socket.on('broadcast', function(room, message, data) {
+				console.log('Broadcast message', room, message, data);
 
-				var room    = data.room;
-				var message = data.message;
-				var context = data.context;
-
-				if (data.room == undefined)
-					console.log('No room specified!');
-				else if (data.message == undefined)
-					console.log('No message specified!');
-				else {
-					socket.to(room).emit(message, context);
-				}
+				socket.to(room).emit(message, data);
 			});
 		});
 
