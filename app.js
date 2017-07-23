@@ -85,13 +85,19 @@ var App = function(argv) {
 
 						function timeout() {
 							timer = undefined;
-							reject(new Error(sprintf('Timeout emitting \'%s\'', message)));
+							reject(new Error(sprintf('Timeout emitting event \'%s\'', message)));
 						}
 
-						socket.emit(message, context, function(data) {
+						socket.emit(message, context, function(data, error) {
+							console.log('reply', data);
+							console.log('reply', error);
+
 							if (timer != undefined) {
 								clearTimeout(timer);
-								resolve(data);
+								if (error)
+									reject(error);
+								else
+									resolve(data);
 							}
 						});
 
