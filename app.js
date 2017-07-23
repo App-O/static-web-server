@@ -24,7 +24,7 @@ var Service = function(socket, name, timeout) {
 	_this.timeout = timeout == undefined ? 5000 : timeout;
 
 	console.log('New service', _this.name, _this.id);
-	
+
 	_this.emit = function(message, context) {
 		return new Promise(function(resolve, reject) {
 
@@ -164,6 +164,7 @@ var App = function(argv) {
 				console.log('Disconnect from socket', socket.id);
 
 				services = services.filter(function(service) {
+					console.log(service.id, socket.id);
 					service.id != socket.id;
 				});
 
