@@ -37,6 +37,35 @@ var App = function(argv) {
 		return args.argv;
 	}
 
+	function emit(socket, message, context) {
+		return new Promise(function(resolve, reject) {
+
+			var timer = setTimeout(timeout, 5000);
+
+			function timeout() {
+				timer = undefined;
+				reject(new Error(sprintf('Timeout emitting event \'%s\'', message)));
+			}
+
+			socket.emit(message, context, function(data) {
+				try {
+					if (timer != undefined) {
+						clearTimeout(timer);
+
+						if (data.error)
+							throw new Error(data.error);
+						else
+							resolve(data);
+
+					}
+				}
+				catch(error) {
+					reject(error);
+				}
+			});
+
+		});
+	}
 
 	function run() {
 
@@ -78,35 +107,7 @@ var App = function(argv) {
 				var message = request.params.message;
 				var context = request.body;
 
-				function emit(socket, message, context) {
-					return new Promise(function(resolve, reject) {
 
-						var timer = setTimeout(timeout, 5000);
-
-						function timeout() {
-							timer = undefined;
-							reject(new Error(sprintf('Timeout emitting event \'%s\'', message)));
-						}
-
-						socket.emit(message, context, function(data) {
-							try {
-								if (timer != undefined) {
-									clearTimeout(timer);
-
-									if (data.error)
-										throw new Error(data.error);
-									else
-										resolve(data);
-
-								}
-							}
-							catch(error) {
-								reject(error);
-							}
-						});
-
-					});
-				}
 
 				console.log('Service message', message, 'to room', room, 'context', context);
 
@@ -133,6 +134,42 @@ var App = function(argv) {
 
 			}
 		});
+
+		app.post('/services/:name/:message', function(request, response) {
+
+			try {
+				var name    = request.params.room;
+				var message = request.params.message;
+				var context = request.body;
+
+				console.log('Service message', message, 'to service', name, 'context', context);
+
+				for (var index = 0; index < services.length; index++) {
+					var service = services[index];
+
+					if (service.name == name) {
+						emit(service.socket, message, context).then(function(result) {
+							response.status(200).json(result);
+						})
+						.catch(function(error) {
+							response.status(401).json({error:error.message});
+						});
+
+						return;
+					}
+				}
+
+				throw Error('Service not found');
+
+			}
+			catch(error) {
+				console.log('Posting failed', error);
+				response.status(401).json({error:error.message});
+
+			}
+		});
+
+
 		app.post('/broadcast/:room/:message', function(request, response) {
 
 			try {
@@ -163,6 +200,12 @@ var App = function(argv) {
 
 			socket.on('disconnect', function() {
 				console.log('Disconnect from socket', socket.id);
+
+				services = services.filter(function(service) {
+					service.id != socket.id;
+				});
+
+				console.log('Service count', services.length);
 			});
 
 
@@ -174,6 +217,20 @@ var App = function(argv) {
 				});
 			});
 
+			socket.on('service', function(data) {
+				console.log('Socket', socket.id, 'registerred service', data.name);
+
+				var service = {};
+				service.id     = socket.id;
+				service.name   = data.name;
+				service.socket = socket;
+
+				services = services.filter(function(service) {
+					service.id != socket.id;
+				});
+
+				services.push(service);
+			});
 
 
 			socket.on('leave', function(data) {
