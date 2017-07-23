@@ -138,7 +138,7 @@ var App = function(argv) {
 		app.post('/services/:name/:message', function(request, response) {
 
 			try {
-				var name    = request.params.room;
+				var name    = request.params.name;
 				var message = request.params.message;
 				var context = request.body;
 
