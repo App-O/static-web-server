@@ -84,7 +84,15 @@ var App = function(argv) {
 					var socket = io.sockets.connected[clients[0]];
 
 					if (socket != undefined) {
+
+						function timeout() {
+							response.status(401).json({error:'Timeout'}});
+						}
+
+						var timer = setTimeout(timeout, 5000);
+						
 						socket.emit(message, context, function(data) {
+							clearTimeout(timer);
 							console.log('reply', data);
 							response.status(200).json(data);
 						});
