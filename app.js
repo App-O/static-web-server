@@ -95,7 +95,7 @@ var App = function(argv) {
 							if (timer != undefined) {
 								clearTimeout(timer);
 								if (error)
-									reject(error);
+									reject(new Error(error));
 								else
 									resolve(data);
 							}
