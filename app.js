@@ -183,8 +183,8 @@ var App = function(argv) {
 				debug('Removing all event listeners from socket');
 				service.socket.removeAllListeners();
 
-				debug('Removing all event listeners from namespace', service.name);
-				io.of('/' + service.name).removeAllListeners();
+				//debug('Removing all event listeners from namespace', service.name);
+				//io.of('/' + service.name).removeAllListeners();
 
 				services = services.filter(function(service) {
 					return service.id != socket.id;
@@ -219,12 +219,23 @@ var App = function(argv) {
 				var namespace = io.of('/' + service.name);
 				var serviceName = service.name;
 
+				namespace.on('disconnect', function() {
+					debug('****************************************');
+
+				});
+				namespace.on('disconnecting', function() {
+					debug('****************************************');
+
+				});
 				namespace.on('connection', function(socket) {
 					methods.forEach(function(method) {
 
 						socket.on('disconnect', function() {
-							debug('Removing all event listeners for method', method);
-							socket.removeAllListeners();
+							debug('Disconnect! Removing all event listeners for method', method);
+						});
+
+						socket.on('disconnecting', function() {
+							debug('Disconnecting!!', method);
 						});
 
 						socket.on(method, function(params, fn) {
