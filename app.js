@@ -185,7 +185,7 @@ var App = function(argv) {
 			socket.on('broadcast', function(room, message, data) {
 				console.log('Broadcast message', room, message, data);
 
-				socket.to(room).emit(message, data);
+				socket.in(room).emit(message, data);
 			});
 
 			socket.on('service', function(data) {
