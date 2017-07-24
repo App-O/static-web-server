@@ -62,6 +62,7 @@ var Service = function(socket, name, timeout) {
 var App = function(argv) {
 
 	argv = parseArgs();
+	var services = [];
 
 	function debug() {
 		console.log.apply(this, arguments);
@@ -162,7 +163,6 @@ var App = function(argv) {
 
 		io.of('/services').on('connection', function (socket) {
 
-			var services = [];
 
 			function findService(name) {
 				var service = services.find(function(service) {
