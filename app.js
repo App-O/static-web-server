@@ -201,13 +201,13 @@ var App = function(argv) {
 					return service.id == socket.id;
 				});
 
-				var namespace = io.of('/' + service.name);
-
-				namespace.emit(message, data);
+				if (service != undefined) {
+					io.of('/' + service.name).emit(message, data);
+				}
 			});
 
 			socket.on('service', function(name, methods, options) {
-				console.log('Socket', socket.id, 'registerred service', name);
+				debug('Socket', socket.id, 'registerred service', name);
 
 				var service = new Service(socket, name, options.timeout);
 
@@ -217,8 +217,8 @@ var App = function(argv) {
 
 				services.push(service);
 
-				var namespace = io.of('/' + service.name);
 				var serviceName = service.name;
+				var namespace = io.of('/' + serviceName);
 
 				namespace.on('connection', function(socket) {
 					methods.forEach(function(method) {
@@ -256,8 +256,7 @@ var App = function(argv) {
 					});
 				});
 
-
-				console.log('Service count', services.length);
+				debug('Number of current active services:', services.length);
 			});
 
 
