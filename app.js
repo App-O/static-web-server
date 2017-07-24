@@ -154,14 +154,94 @@ var App = function(argv) {
 		});
 
 
-		io.on('connection', function (socket) {
+
+/*
+		io.of('/services').on('connection', function (socket) {
 
 
-			console.log('******************************SocketIO connection from', socket.id);
+			function findService(name) {
+				var service = services.find(function(service) {
+					return service.name == name;
+				});
+
+				return service;
+			}
+
+			console.log('Service connection from', socket.id);
+
+			socket.on('disconnect', function() {
+				console.log('Disconnect from socket', socket.id);
+
+				services = services.filter(function(service) {
+					return service.id != socket.id;
+				});
+
+				console.log('Service count', services.length);
+			});
+
+
+			socket.on('notify', function(message, data) {
+
+				var service = services.find(function(service) {
+					return service.id == socket.id;
+				});
+
+				var namespace = io.of('/' + service.name);
+
+				namespace.emit(message, data);
+			});
+
+			socket.on('create', function(name, methods, options) {
+				console.log('Socket', socket.id, 'registerred service', name);
+
+				var service = new Service(socket, name, options.timeout);
+
+				services = services.filter(function(service) {
+					return service.id != socket.id;
+				});
+
+				var namespace = io.of('/' + name);
+
+				methods.forEach(function(method) {
+					namespace.on(method, function(data) {
+						socket.emit(method, data);
+					});
+				});
+
+				services.push(service);
+				console.log('Service count', services.length);
+			});
+
+
+			socket.on('invoke', function(name, message, data, fn) {
+
+				console.log('Invoking service', name, message, data);
+
+				var service = services.find(function(service) {
+					return service.name == name;
+				});
+
+				if (service != undefined) {
+					service.emit(message, data).then(function(data) {
+						if (isFunction(fn))
+							fn(data);
+					})
+					.catch(function(error) {
+						console.log(error);
+
+						if (isFunction(fn))
+							fn({error:error.message});
+					})
+				}
+				else {
+					fn({error:'Service not found'});
+					console.log('Service', name, 'not found');
+				}
+			});
 
 		});
-
-		io.of('/foo').on('connection', function (socket) {
+*/
+		io('/foobar').on('connection', function (socket) {
 
 
 			console.log('SocketIO (namespace) connection from', socket.id);
