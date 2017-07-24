@@ -223,11 +223,7 @@ var App = function(argv) {
 				namespace.on('connection', function(socket) {
 					methods.forEach(function(method) {
 
-						socket.on('disconnect', function() {
-						});
-
-						socket.on('disconnecting', function() {
-						});
+						debug('Defining method', method, 'for service', serviceName, '...');
 
 						socket.on(method, function(params, fn) {
 
