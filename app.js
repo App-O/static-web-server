@@ -172,6 +172,9 @@ var App = function(argv) {
 			socket.on('disconnect', function() {
 				console.log('Disconnect from socket', socket.id);
 
+
+				socket.removeAllListeners();
+
 				services = services.filter(function(service) {
 					return service.id != socket.id;
 				});
@@ -210,6 +213,7 @@ var App = function(argv) {
 						socket.on(method, function(params, fn) {
 
 							var service = findService(serviceName);
+
 
 							service.emit(method, params).then(function(reply) {
 								if (isFunction(fn))
