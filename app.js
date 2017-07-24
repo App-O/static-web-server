@@ -93,7 +93,7 @@ var App = function(argv) {
 		prefixLogs();
 
 		var path = Path.resolve(argv.root);
-		var services = [];
+
 
 		app.use(express.static(path));
 
@@ -162,6 +162,7 @@ var App = function(argv) {
 
 		io.of('/services').on('connection', function (socket) {
 
+			var services = [];
 
 			function findService(name) {
 				var service = services.find(function(service) {
@@ -219,25 +220,13 @@ var App = function(argv) {
 				var namespace = io.of('/' + service.name);
 				var serviceName = service.name;
 
-				namespace.on('disconnect', function() {
-					debug('****************************************');
-
-				});
-				namespace.on('disconnecting', function() {
-					debug('****************************************');
-
-				});
-
-
 				namespace.on('connection', function(socket) {
 					methods.forEach(function(method) {
 
 						socket.on('disconnect', function() {
-							debug('Disconnect! Removing all event listeners for method', method);
 						});
 
 						socket.on('disconnecting', function() {
-							debug('Disconnecting!!', method);
 						});
 
 						socket.on(method, function(params, fn) {
