@@ -154,7 +154,7 @@ var App = function(argv) {
 		});
 
 
-		io..on('connection', function (socket) {
+		io.on('connection', function (socket) {
 
 
 			console.log('******************************SocketIO connection from', socket.id);
