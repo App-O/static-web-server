@@ -183,8 +183,8 @@ var App = function(argv) {
 				debug('Removing all event listeners from socket');
 				service.socket.removeAllListeners();
 
-				//debug('Removing all event listeners from namespace', service.name);
-				//io.of('/' + service.name).removeAllListeners();
+				debug('Removing all event listeners from namespace', service.name);
+				io.of('/' + service.name).removeAllListeners();
 
 				services = services.filter(function(service) {
 					return service.id != socket.id;
@@ -242,17 +242,27 @@ var App = function(argv) {
 
 							var service = findService(serviceName);
 
+							if (service != undefined) {
 
-							service.emit(method, params).then(function(reply) {
-								if (isFunction(fn))
-									fn(reply);
-							})
-							.catch(function(error) {
-								console.log(error);
+								service.emit(method, params).then(function(reply) {
+									if (isFunction(fn))
+										fn(reply);
+								})
+								.catch(function(error) {
+									console.log(error);
 
+									if (isFunction(fn))
+										fn({error:error.message});
+								})
+							}
+							else {
+								debug('Service', serviceName, 'disappeared!');
+								socket.removeAllListeners();
+								
 								if (isFunction(fn))
-									fn({error:error.message});
-							})
+									fn({error:'Service no longer available'});
+
+							}
 
 						});
 					});
