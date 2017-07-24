@@ -263,7 +263,7 @@ var App = function(argv) {
 
 
 		});
-
+/*
 		io.of('/foobar').on('connection', function (socket) {
 
 
@@ -339,6 +339,7 @@ var App = function(argv) {
 			});
 
 		});
+*/
 
 		server.listen(argv.port, function () {
 			console.log('Root path is %s.', path);
