@@ -244,7 +244,7 @@ var App = function(argv) {
 		io.of('/foobar').on('connection', function (socket) {
 
 
-			console.log('SocketIO (namespace) connection from', socket.id, socket.nsp);
+			console.log('SocketIO (namespace) connection from', socket.id, socket.nsp.name);
 
 			socket.emit('hello', {});
 
