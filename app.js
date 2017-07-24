@@ -221,6 +221,12 @@ var App = function(argv) {
 
 				namespace.on('connection', function(socket) {
 					methods.forEach(function(method) {
+
+						socket.on('disconnect', function() {
+							debug('Removing all event listeners for method', method);
+							socket.removeAllListeners();
+						});
+
 						socket.on(method, function(params, fn) {
 
 							var service = findService(serviceName);
