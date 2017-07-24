@@ -172,8 +172,13 @@ var App = function(argv) {
 			socket.on('disconnect', function() {
 				console.log('Disconnect from socket', socket.id);
 
+				var service = services.find(function(service) {
+					return service.id == socket.id;
+				});
 
-				socket.removeAllListeners();
+				service.socket.removeAllListeners();
+				var namespace = io.of('/' + service.name);
+				namespace.removeAllListeners();
 
 				services = services.filter(function(service) {
 					return service.id != socket.id;
