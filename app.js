@@ -207,7 +207,7 @@ var App = function(argv) {
 
 				namespace.on('connection', function(socket) {
 					methods.forEach(function(method) {
-						socket.on(method, function(params) {
+						socket.on(method, function(params, fn) {
 
 							var service = findService(serviceName);
 
