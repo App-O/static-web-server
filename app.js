@@ -211,9 +211,9 @@ var App = function(argv) {
 
 							var service = findService(serviceName);
 
-							service.emit(method, data).then(function(data) {
+							service.emit(method, params).then(function(reply) {
 								if (isFunction(fn))
-									fn(data);
+									fn(reply);
 							})
 							.catch(function(error) {
 								console.log(error);
