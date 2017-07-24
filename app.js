@@ -241,7 +241,7 @@ var App = function(argv) {
 
 		});
 */
-		io.('/foobar').on('connection', function (socket) {
+		io.of('/foobar').on('connection', function (socket) {
 
 
 			console.log('SocketIO (namespace) connection from', socket.id);
