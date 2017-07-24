@@ -155,7 +155,7 @@ var App = function(argv) {
 
 
 
-/*
+
 		io.of('/services').on('connection', function (socket) {
 
 
@@ -191,7 +191,7 @@ var App = function(argv) {
 				namespace.emit(message, data);
 			});
 
-			socket.on('create', function(name, methods, options) {
+			socket.on('service', function(name, methods, options) {
 				console.log('Socket', socket.id, 'registerred service', name);
 
 				var service = new Service(socket, name, options.timeout);
@@ -200,47 +200,40 @@ var App = function(argv) {
 					return service.id != socket.id;
 				});
 
-				var namespace = io.of('/' + name);
+				services.push(service);
 
-				methods.forEach(function(method) {
-					namespace.on(method, function(data) {
-						socket.emit(method, data);
+				var namespace = io.of('/' + service.name);
+				var serviceName = service.name;
+
+				namespace.on('connection', function(socket) {
+					methods.forEach(function(method) {
+						socket.on(method, function(params) {
+
+							var service = findService(serviceName);
+
+							service.emit(message, data).then(function(data) {
+								if (isFunction(fn))
+									fn(data);
+							})
+							.catch(function(error) {
+								console.log(error);
+
+								if (isFunction(fn))
+									fn({error:error.message});
+							})
+
+						});
 					});
 				});
 
-				services.push(service);
+
 				console.log('Service count', services.length);
 			});
 
 
-			socket.on('invoke', function(name, message, data, fn) {
-
-				console.log('Invoking service', name, message, data);
-
-				var service = services.find(function(service) {
-					return service.name == name;
-				});
-
-				if (service != undefined) {
-					service.emit(message, data).then(function(data) {
-						if (isFunction(fn))
-							fn(data);
-					})
-					.catch(function(error) {
-						console.log(error);
-
-						if (isFunction(fn))
-							fn({error:error.message});
-					})
-				}
-				else {
-					fn({error:'Service not found'});
-					console.log('Service', name, 'not found');
-				}
-			});
 
 		});
-*/
+
 		io.of('/foobar').on('connection', function (socket) {
 
 
