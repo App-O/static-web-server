@@ -63,6 +63,10 @@ var App = function(argv) {
 
 	argv = parseArgs();
 
+	function debug() {
+		console.log.apply(this, arguments);
+	}
+
 	function parseArgs() {
 
 		var args = require('yargs');
@@ -170,21 +174,23 @@ var App = function(argv) {
 			console.log('Service connection from', socket.id);
 
 			socket.on('disconnect', function() {
-				console.log('Disconnect from socket', socket.id);
+				debug('Disconnect from socket', socket.id);
 
 				var service = services.find(function(service) {
 					return service.id == socket.id;
 				});
 
+				debug('Removing all event listeners from socket');
 				service.socket.removeAllListeners();
-				var namespace = io.of('/' + service.name);
-				namespace.removeAllListeners();
+
+				debug('Removing all event listeners from namespace', service.name);
+				io.of('/' + service.name).removeAllListeners();
 
 				services = services.filter(function(service) {
 					return service.id != socket.id;
 				});
 
-				console.log('Service count', services.length);
+				debug('Number of current active services:', services.length);
 			});
 
 
