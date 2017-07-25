@@ -198,7 +198,7 @@ var App = function(argv) {
 				console.log('New provider socket connection', socket.id);
 
 				events.forEach(function(event) {
-					console.log('Defining event \%s::'%s\'.', provider, event);
+					console.log('Defining event \'%s::%s\'.', provider, event);
 					socket.on(event, function(args) {
 						consumerNamespace.emit(event, args);
 					});
