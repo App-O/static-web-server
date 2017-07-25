@@ -102,6 +102,35 @@ var App = function(argv) {
 		app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
 		app.use(bodyParser.json({limit: '50mb'}));
 
+		function emit(socket, message, context) {
+			return new Promise(function(resolve, reject) {
+
+				var timer = setTimeout(expired, 10000);
+
+				function expired() {
+					timer = undefined;
+					reject(new Error(sprintf('Timeout emitting event \'%s\'', message)));
+				}
+
+				socket.emit(message, context, function(data) {
+					try {
+						if (timer != undefined) {
+							clearTimeout(timer);
+
+							if (data.error)
+								throw new Error(data.error);
+							else
+								resolve(data);
+
+						}
+					}
+					catch(error) {
+						reject(error);
+					}
+				});
+
+			});
+		}
 
 
 		app.post('/service/:name/:message', function(request, response) {
@@ -114,12 +143,10 @@ var App = function(argv) {
 
 				console.log('Service message', message, 'to service', name, 'context', context);
 
-				var service = services.find(function(service) {
-					return service.name == name;
-				});
+				var serviceSocket = serviceMap[name];
 
-				if (service) {
-					service.emit(message, context).then(function(result) {
+				if (serviceSocket != undefined) {
+					emit(serviceSocket, message, context).then(function(result) {
 						response.status(200).json(result);
 					})
 					.catch(function(error) {
@@ -164,35 +191,6 @@ var App = function(argv) {
 			var providerNamespace = io.of('/' + provider);
 			var consumerNamespace = io.of('/' + consumer);
 
-			function emit(socket, message, context) {
-				return new Promise(function(resolve, reject) {
-
-					var timer = setTimeout(expired, 10000);
-
-					function expired() {
-						timer = undefined;
-						reject(new Error(sprintf('Timeout emitting event \'%s\'', message)));
-					}
-
-					socket.emit(message, context, function(data) {
-						try {
-							if (timer != undefined) {
-								clearTimeout(timer);
-
-								if (data.error)
-									throw new Error(data.error);
-								else
-									resolve(data);
-
-							}
-						}
-						catch(error) {
-							reject(error);
-						}
-					});
-
-				});
-			}
 
 			providerNamespace.on('connection', function(socket) {
 				console.log('New provider socket connection', socket.id);
