@@ -168,7 +168,6 @@ var App = function(argv) {
 			});
 		}
 
-/*
 		app.post('/service/:name/:message', function(request, response) {
 
 			try {
@@ -179,10 +178,10 @@ var App = function(argv) {
 
 				console.log('Service message', message, 'to service', name, 'context', context);
 
-				var serviceSocket = serviceMap[name];
+				var service = services.findByName(name);
 
-				if (serviceSocket != undefined) {
-					emit(serviceSocket, message, context).then(function(result) {
+				if (service != undefined) {
+					service.emit(message, context).then(function(result) {
 						response.status(200).json(result);
 					})
 					.catch(function(error) {
@@ -201,7 +200,7 @@ var App = function(argv) {
 			}
 		});
 
-*/
+
 
 		function registerService(serviceName, methods, events) {
 
