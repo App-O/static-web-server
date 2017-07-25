@@ -256,7 +256,14 @@ var App = function(argv) {
 		}
 
 
+		io.of('/services').on('connection', function(socket) {
 
+			socket.on('register-service', function(provider, consumer, methods, events) {
+				console.log('Registerring service', arguments);
+				registerService(provider, consumer, methods, events);
+			});
+
+		});
 
 		function registerServices() {
 			for (var key in config.namespaces) {

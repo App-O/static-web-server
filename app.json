@@ -9,10 +9,6 @@
 			"methods"  : ["cancel", "clear", "stop", "text", "perlin", "rain", "stop", "emoji", "animation"],
 			"events"   : ["idle", "running"]
 		},
-		"neopixel-lamp": {
-			"methods"  : ["colorize"],
-			"events"   : ["color-changed"]
-		},
 		"tellstick": {
 			"methods"  : ["turnOn", "turnOff", "bell", "devices"],
 			"events"   : ["status"]
