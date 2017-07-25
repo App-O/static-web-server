@@ -167,7 +167,7 @@ var App = function(argv) {
 			function emit(socket, message, context) {
 				return new Promise(function(resolve, reject) {
 
-					var timer = setTimeout(expired, 5000);
+					var timer = setTimeout(expired, 10000);
 
 					function expired() {
 						timer = undefined;
