@@ -59,12 +59,48 @@ var Service = function(socket, name, timeout) {
 };
 
 
+var Services = function() {
+
+	var _this = this;
+	var _services = [];
+
+	_this.findByName = function(name) {
+		return _services.find(function(service) {
+			return service.name == name;
+		});
+	}
+
+	_this.findByID = function(id) {
+		return _services.find(function(service) {
+			return service.id == id;
+		});
+	}
+
+	_this.add = function(service) {
+		_this.removeByName(service.name);
+		_services.push(service);
+	}
+
+	_this.removeByName = function(name) {
+		_services = _services.filter(function(service) {
+			return service.name != name;
+		});
+	};
+
+	_this.removeByID = function(id) {
+		_services = _services.filter(function(service) {
+			return service.id != id;
+		});
+	};
+
+
+
+};
 
 var App = function(argv) {
 
 	argv = parseArgs();
-	var services = [];
-	var serviceMap = {};
+	var services = new Services();
 
 	function debug() {
 		console.log.apply(this, arguments);
@@ -132,7 +168,7 @@ var App = function(argv) {
 			});
 		}
 
-
+/*
 		app.post('/service/:name/:message', function(request, response) {
 
 			try {
@@ -165,9 +201,74 @@ var App = function(argv) {
 			}
 		});
 
+*/
+
+		function registerService(serviceName, methods, events) {
+
+			var namespace = io.of('/' + serviceName);
+
+			namespace.on('connection', function(socket) {
+
+				socket.on('disconnect', function() {
+					services.removeByID(socket.id);
+				});
+
+				socket.on('i-am-the-provider', function() {
+					debug('Service %s connected...', serviceName);
+					services.add(new Service(socket, serviceName, 10000));
+
+				});
+
+				events.forEach(function(event) {
+					console.log('Defining event \'%s::%s\'.', serviceName, event);
+
+					socket.on(event, function(params) {
+						namespace.emit(event, params);
+					});
+
+				});
+
+				methods.forEach(function(method) {
+					console.log('Defining method \'%s::%s\'.', serviceName, method);
+
+					socket.on(method, function(params, fn) {
+
+						var service = services.findByName(serviceName);
+
+						if (service != undefined) {
+							service.emit(method, params).then(function(reply) {
+								if (isFunction(fn))
+									fn(reply);
+							})
+							.catch(function(error) {
+								console.log(error);
+
+								if (isFunction(fn))
+									fn({error:error.message});
+							});
+
+						}
+						else {
+							console.log('Service', serviceName, 'not found.');
+
+							if (isFunction(fn))
+								fn({error:sprintf('Service %s not found.', serviceName)});
+
+						}
+
+					});
 
 
-		function registerService(provider, consumer, methods, events) {
+				});
+
+
+			});
+
+		}
+
+
+
+		function registerServiceOOOLLLDD(provider, consumer, methods, events) {
 
 			var providerNamespace = io.of('/' + provider);
 			var consumerNamespace = io.of('/' + consumer);
