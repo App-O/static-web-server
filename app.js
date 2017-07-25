@@ -341,7 +341,7 @@ var App = function(argv) {
 		function registerServices() {
 			for (var key in config.namespaces) {
 				var entry = config.namespaces[key];
-				registerService(key + '-service', key, entry.methods, entry.events);
+				registerService(key, entry.methods, entry.events);
 			}
 
 		}
