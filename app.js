@@ -246,7 +246,8 @@ var App = function(argv) {
 
 						}
 						else {
-							fn({error:sprintf('Service %s not found', provider)});
+							if (isFunction(fn))
+								fn({error:sprintf('Service %s not found', provider)});
 
 						}
 
