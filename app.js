@@ -159,7 +159,7 @@ var App = function(argv) {
 			}
 		});
 
-		function registerService(provider, consumer, messages, events) {
+		function registerService(provider, consumer, methods, events) {
 
 			var providerNamespace = io.of('/' + provider);
 			var consumerNamespace = io.of('/' + consumer);
@@ -198,19 +198,18 @@ var App = function(argv) {
 				console.log('New provider socket connection', socket.id);
 
 
-				debug('Service %s connected', provider);
+				debug('Service %s connected...', provider);
 				serviceMap[provider] = socket;
 
 				socket.on('disconnect', function() {
-					debug('Service %s disconnected', provider);
+					debug('Service %s disconnected.', provider);
 					delete serviceMap[provider];
 				});
 
 				events.forEach(function(event) {
 					console.log('Defining event \'%s::%s\'.', provider, event);
 
-					socket.on(event, function(params, fn) {
-						debug('Event %s called', event);
+					socket.on(event, function(params) {
 						consumerNamespace.emit(event, params);
 					});
 
@@ -221,17 +220,15 @@ var App = function(argv) {
 			consumerNamespace.on('connection', function(socket) {
 				console.log('New consumer socket connection', socket.id);
 
-				messages.forEach(function(message) {
-					console.log('Defining method \'%s::%s\'.', consumer, message);
+				methods.forEach(function(method) {
+					console.log('Defining method \'%s::%s\'.', consumer, method);
 
-					socket.on(message, function(params, fn) {
-
-						debug('Method %s called', message, params);
+					socket.on(method, function(params, fn) {
 
 						var providerSocket = serviceMap[provider];
 
 						if (providerSocket != undefined) {
-							emit(providerSocket, message, params).then(function(reply) {
+							emit(providerSocket, method, params).then(function(reply) {
 								if (isFunction(fn))
 									fn(reply);
 							})
@@ -244,10 +241,10 @@ var App = function(argv) {
 
 						}
 						else {
-							console.log('Service', provider, 'not found');
+							console.log('Service', provider, 'not found.');
 
 							if (isFunction(fn))
-								fn({error:sprintf('Service %s not found', provider)});
+								fn({error:sprintf('Service %s not found.', provider)});
 
 						}
 
@@ -266,7 +263,7 @@ var App = function(argv) {
 		function registerServices() {
 			for (var key in config.namespaces) {
 				var entry = config.namespaces[key];
-				registerService(entry.provider, entry.consumer, entry.messages, entry.events);
+				registerService(entry.provider, entry.consumer, entry.methods, entry.events);
 			}
 
 		}
