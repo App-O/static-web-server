@@ -194,7 +194,7 @@ var App = function(argv) {
 				});
 			}
 
-			providerNamespace.on('connection', function(socket) {
+			consumerNamespace.on('connection', function(socket) {
 				console.log('New provider socket connection', socket.id);
 
 				events.forEach(function(event) {
@@ -203,14 +203,25 @@ var App = function(argv) {
 					socket.on(event, function(params, fn) {
 
 						debug('Event %s called', event);
-						socket.emit(event, params, fn);
+
+						emit(socket, event, params).then(function(reply) {
+							if (isFunction(fn))
+								fn(reply);
+						})
+						.catch(function(error) {
+							console.log(error);
+
+							if (isFunction(fn))
+								fn({error:error.message});
+						});
+
 					});
 
 				});
 
 			});
 
-			consumerNamespace.on('connection', function(socket) {
+			providerNamespace.on('connection', function(socket) {
 				console.log('New consumer socket connection', socket.id);
 
 				messages.forEach(function(message) {
