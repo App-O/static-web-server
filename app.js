@@ -238,7 +238,7 @@ var App = function(argv) {
 
 						socket.on(method, function(params, fn) {
 
-							var service = findService(serviceName);
+							var service = findServiceByName(serviceName);
 
 							if (service != undefined) {
 
