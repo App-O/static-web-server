@@ -64,6 +64,7 @@ var App = function(argv) {
 
 	argv = parseArgs();
 	var services = [];
+	var serviceMap = {};
 
 	function debug() {
 		console.log.apply(this, arguments);
@@ -196,6 +197,17 @@ var App = function(argv) {
 			providerNamespace.on('connection', function(socket) {
 				console.log('New provider socket connection', socket.id);
 
+
+				socket.on('connect', function() {
+					debug('Service %s connected', provider);
+					serviceMap[provider] = socket;
+				});
+
+				socket.on('disconnect', function() {
+					debug('Service %s disconnected', provider);
+					delete serviceMap[provider];
+				});
+
 				events.forEach(function(event) {
 					console.log('Defining event \'%s::%s\'.', provider, event);
 
@@ -218,16 +230,25 @@ var App = function(argv) {
 
 						debug('Method %s called', message, params);
 
-						emit(socket, message, params).then(function(reply) {
-							if (isFunction(fn))
-								fn(reply);
-						})
-						.catch(function(error) {
-							console.log(error);
+						var providerSocket = serviceMap[provider];
 
-							if (isFunction(fn))
-								fn({error:error.message});
-						});
+						if (providerSocket != undefined) {
+							emit(providerSocket, message, params).then(function(reply) {
+								if (isFunction(fn))
+									fn(reply);
+							})
+							.catch(function(error) {
+								console.log(error);
+
+								if (isFunction(fn))
+									fn({error:error.message});
+							});
+
+						}
+						else {
+							fn({error:sprintf('Service %s not found', provider)});
+
+						}
 
 					});
 
