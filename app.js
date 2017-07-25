@@ -262,7 +262,7 @@ var App = function(argv) {
 
 			console.log('Service connection!');
 
-			socket.on('register-service', function(provider, consumer, methods, events) {
+			socket.on('register', function(provider, consumer, methods, events) {
 				console.log('Registerring service', provider, consumer, methods, events);
 				registerService(provider, consumer, methods, events);
 
