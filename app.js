@@ -14,6 +14,7 @@ var redirectLogs = require('yow').redirectLogs;
 var prefixLogs = require('yow').prefixLogs;
 var bodyParser = require('body-parser');
 var cors = require('cors');
+var config = require('./app.json');
 
 var Service = function(socket, name, timeout) {
 
@@ -158,8 +159,55 @@ var App = function(argv) {
 			}
 		});
 
+		function registerService(provider, consumer, messages, events) {
+
+			var providerNamespace = io.of('/' + provider);
+			var consumerNamespace = io.of('/' + consumer);
+
+			providerNamespace.on('connection', function(socket) {
+				console.log('New provider socket connection', socket.id);
+
+				events.forEach(function(event) {
+					console.log('Defining event \%s::'%s\'.', provider, event);
+					socket.on(event, function(args) {
+						consumerNamespace.emit(event, args);
+					});
+
+				});
+
+				socket.emit('hello');
+			});
+
+			consumerNamespace.on('connection', function(socket) {
+				console.log('New consumer socket connection', socket.id);
 
 
+
+				messages.forEach(function(message) {
+					console.log('Defining message \'%s::%s\'.', consumer, message);
+					socket.on(message, function(args) {
+						providerNamespace.emit(message, args);
+					});
+
+				});
+
+				socket.emit('hello');
+			});
+
+		}
+
+
+
+
+		function regiserServices() {
+			for (var key in config.namespaces) {
+				var entry = config.namespaces[key];
+				registerService(entry.provider, entry.consumer, entry.messages, entry.events);
+			}
+
+		}
+
+/*
 
 		io.of('/services').on('connection', function (socket) {
 
@@ -274,6 +322,8 @@ var App = function(argv) {
 
 
 		});
+
+		*/
 /*
 		io.of('/foobar').on('connection', function (socket) {
 
@@ -355,6 +405,7 @@ var App = function(argv) {
 		server.listen(argv.port, function () {
 			console.log('Root path is %s.', path);
 			console.log('Listening on port %d...', argv.port);
+			regiserServices();
 
 		});
 
