@@ -203,18 +203,7 @@ var App = function(argv) {
 					socket.on(event, function(params, fn) {
 
 						debug('Event %s called', event);
-
-						emit(socket, event, params).then(function(reply) {
-							if (isFunction(fn))
-								fn(reply);
-						})
-						.catch(function(error) {
-							console.log(error);
-
-							if (isFunction(fn))
-								fn({error:error.message});
-						});
-
+						socket.emit(event, params, fn);
 					});
 
 				});
