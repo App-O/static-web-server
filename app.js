@@ -448,7 +448,7 @@ var App = function(argv) {
 		server.listen(argv.port, function () {
 			console.log('Root path is %s.', path);
 			console.log('Listening on port %d...', argv.port);
-			regiserServices();
+			registerServices();
 
 		});
 
