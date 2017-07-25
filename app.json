@@ -1,10 +1,16 @@
 
 {
 	"namespaces": {
-		"matrix-display": {
+		"hzeller-matrix-64x32": {
 			"consumer" : "hzeller-matrix-64x32",
 			"provider" : "hzeller-matrix-64x32-service",
-			"messages" : ["text", "perlin", "rain", "stop", "emoji", "animation"],
+			"messages" : ["cancel", "clear", "stop", "text", "perlin", "rain", "stop", "emoji", "animation", "hello"],
+			"events"   : ["idle", "running"]
+		},
+		"hzeller-matrix-32x32": {
+			"consumer" : "hzeller-matrix-32x32",
+			"provider" : "hzeller-matrix-32x32-service",
+			"messages" : ["cancel", "clear", "stop", "text", "perlin", "rain", "stop", "emoji", "animation", "hello"],
 			"events"   : ["idle", "running"]
 		},
 		"tellstick": {
