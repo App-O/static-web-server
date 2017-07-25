@@ -199,8 +199,22 @@ var App = function(argv) {
 
 				events.forEach(function(event) {
 					console.log('Defining event \'%s::%s\'.', provider, event);
+
 					socket.on(event, function(params, fn) {
-						consumerNamespace.emit(event, params, fn);
+
+						debug('Event %s called', event);
+
+						emit(socket, event, params).then(function(reply) {
+							if (isFunction(fn))
+								fn(reply);
+						})
+						.catch(function(error) {
+							console.log(error);
+
+							if (isFunction(fn))
+								fn({error:error.message});
+						});
+
 					});
 
 				});
