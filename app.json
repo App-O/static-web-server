@@ -13,6 +13,12 @@
 			"messages" : ["cancel", "clear", "stop", "text", "perlin", "rain", "stop", "emoji", "animation"],
 			"events"   : ["idle", "running"]
 		},
+		"neopixel-lamp": {
+			"consumer" : "neopixel-lamp",
+			"provider" : "neopixel-lamp-service",
+			"messages" : ["colorize"],
+			"events"   : ["color-changed"]
+		},
 		"tellstick": {
 			"consumer" : "tellstick",
 			"provider" : "tellstick-service",
