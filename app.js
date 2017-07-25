@@ -164,9 +164,17 @@ var App = function(argv) {
 		io.of('/services').on('connection', function (socket) {
 
 
-			function findService(name) {
+			function findServiceByName(name) {
 				var service = services.find(function(service) {
 					return service.name == name;
+				});
+
+				return service;
+			}
+
+			function findServiceByID(id) {
+				var service = services.find(function(service) {
+					return service.id == id;
 				});
 
 				return service;
@@ -175,23 +183,26 @@ var App = function(argv) {
 			console.log('Service connection from', socket.id);
 
 			socket.on('disconnect', function() {
-				debug('Disconnect from socket', socket.id);
+				var service = findServiceByID(socket.id);
 
-				var service = services.find(function(service) {
-					return service.id == socket.id;
-				});
+				if (service != undefined) {
+					debug('Disconnected from service %s', service.name);
 
-				//debug('Removing all event listeners from socket');
-				//service.socket.removeAllListeners();
+				}
+				else {
+					debug('Disconnect from socket', socket.id, 'Service not found.');
 
-				//debug('Removing all event listeners from namespace', service.name);
-				//io.of('/' + service.name).removeAllListeners();
+				}
 
 				services = services.filter(function(service) {
 					return service.id != socket.id;
 				});
 
-				debug('Number of current active services:', services.length);
+				var names = services.map(function(service) {
+					return service.name;
+				});
+
+				debug('Active services', names);
 			});
 
 
@@ -252,7 +263,12 @@ var App = function(argv) {
 					});
 				});
 
-				debug('Number of current active services:', services.length);
+				var names = services.map(function(service) {
+					return service.name;
+				});
+
+				debug('Active services now', names);
+
 			});
 
 
