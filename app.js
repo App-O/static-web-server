@@ -218,7 +218,7 @@ var App = function(argv) {
 
 						debug('Method %s called', message);
 
-						service.emit(message, params).then(function(reply) {
+						emit(socket, message, params).then(function(reply) {
 							if (isFunction(fn))
 								fn(reply);
 						})
