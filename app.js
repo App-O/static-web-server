@@ -191,6 +191,8 @@ var App = function(argv) {
 			var providerNamespace = io.of('/' + provider);
 			var consumerNamespace = io.of('/' + consumer);
 
+			providerNamespace.removeAllListeners();
+			consumerNamespace.removeAllListeners();
 
 			providerNamespace.on('connection', function(socket) {
 				console.log('New provider socket connection', socket.id);
@@ -263,6 +265,7 @@ var App = function(argv) {
 			socket.on('register-service', function(provider, consumer, methods, events) {
 				console.log('Registerring service', provider, consumer, methods, events);
 				registerService(provider, consumer, methods, events);
+
 			});
 
 		});
