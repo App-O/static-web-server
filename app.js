@@ -198,10 +198,8 @@ var App = function(argv) {
 				console.log('New provider socket connection', socket.id);
 
 
-				socket.on('connect', function() {
-					debug('Service %s connected', provider);
-					serviceMap[provider] = socket;
-				});
+				debug('Service %s connected', provider);
+				serviceMap[provider] = socket;
 
 				socket.on('disconnect', function() {
 					debug('Service %s disconnected', provider);
@@ -246,6 +244,8 @@ var App = function(argv) {
 
 						}
 						else {
+							console.log('Service', provider, 'not found');
+
 							if (isFunction(fn))
 								fn({error:sprintf('Service %s not found', provider)});
 
