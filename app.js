@@ -199,8 +199,8 @@ var App = function(argv) {
 
 				events.forEach(function(event) {
 					console.log('Defining event \'%s::%s\'.', provider, event);
-					socket.on(event, function(args) {
-						consumerNamespace.emit(event, args);
+					socket.on(event, function(params) {
+						consumerNamespace.emit(event, params);
 					});
 
 				});
@@ -234,7 +234,6 @@ var App = function(argv) {
 
 				});
 
-				socket.emit('hello');
 			});
 
 		}
