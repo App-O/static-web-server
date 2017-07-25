@@ -216,7 +216,7 @@ var App = function(argv) {
 
 					socket.on(message, function(params, fn) {
 
-						debug('Method %s called', message);
+						debug('Method %s called', message, params);
 
 						emit(socket, message, params).then(function(reply) {
 							if (isFunction(fn))
