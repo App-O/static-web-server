@@ -164,6 +164,36 @@ var App = function(argv) {
 			var providerNamespace = io.of('/' + provider);
 			var consumerNamespace = io.of('/' + consumer);
 
+			function emit(socket, message, context) {
+				return new Promise(function(resolve, reject) {
+
+					var timer = setTimeout(expired, 5000);
+
+					function expired() {
+						timer = undefined;
+						reject(new Error(sprintf('Timeout emitting event \'%s\'', message)));
+					}
+
+					socket.emit(message, context, function(data) {
+						try {
+							if (timer != undefined) {
+								clearTimeout(timer);
+
+								if (data.error)
+									throw new Error(data.error);
+								else
+									resolve(data);
+
+							}
+						}
+						catch(error) {
+							reject(error);
+						}
+					});
+
+				});
+			}
+
 			providerNamespace.on('connection', function(socket) {
 				console.log('New provider socket connection', socket.id);
 
@@ -181,13 +211,26 @@ var App = function(argv) {
 			consumerNamespace.on('connection', function(socket) {
 				console.log('New consumer socket connection', socket.id);
 
-
-
 				messages.forEach(function(message) {
-					console.log('Defining message \'%s::%s\'.', consumer, message);
-					socket.on(message, function(args) {
-						providerNamespace.emit(message, args);
+					console.log('Defining method \'%s::%s\'.', consumer, message);
+
+					socket.on(message, function(params, fn) {
+
+						debug('Method %s called', message);
+
+						service.emit(message, params).then(function(reply) {
+							if (isFunction(fn))
+								fn(reply);
+						})
+						.catch(function(error) {
+							console.log(error);
+
+							if (isFunction(fn))
+								fn({error:error.message});
+						});
+
 					});
+
 
 				});
 
@@ -199,7 +242,7 @@ var App = function(argv) {
 
 
 
-		function regiserServices() {
+		function registerServices() {
 			for (var key in config.namespaces) {
 				var entry = config.namespaces[key];
 				registerService(entry.provider, entry.consumer, entry.messages, entry.events);
