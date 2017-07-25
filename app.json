@@ -15,7 +15,7 @@
 		},
 		"tellstick": {
 			"consumer" : "tellstick",
-			"provider" : "tellstick-servce",
+			"provider" : "tellstick-service",
 			"messages" : ["turnOn", "turnOff", "bell", "devices"],
 			"events"   : ["status"]
 		}
