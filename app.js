@@ -259,9 +259,9 @@ var App = function(argv) {
 		io.of('/services').on('connection', function(socket) {
 
 			console.log('Service connection!');
-			
+
 			socket.on('register-service', function(provider, consumer, methods, events) {
-				console.log('Registerring service', arguments);
+				console.log('Registerring service', provider, consumer, methods, events);
 				registerService(provider, consumer, methods, events);
 			});
 
