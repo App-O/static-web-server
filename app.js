@@ -205,7 +205,6 @@ var App = function(argv) {
 
 				});
 
-				socket.emit('hello');
 			});
 
 			consumerNamespace.on('connection', function(socket) {
