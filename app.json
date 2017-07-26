@@ -9,6 +9,10 @@
 			"methods"  : ["cancel", "clear", "stop", "text", "perlin", "rain", "stop", "emoji", "animation"],
 			"events"   : ["idle", "running"]
 		},
+		"matrix-96x96": {
+			"methods"  : ["cancel", "clear", "stop", "text", "perlin", "rain", "stop", "emoji", "animation"],
+			"events"   : ["idle", "running"]
+		},
 		"neopixel-lamp": {
 			"methods"  : ["colorize", "reset"],
 			"events"   : ["color-changed"]
