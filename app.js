@@ -169,6 +169,38 @@ var App = function(argv) {
 			}
 		});
 
+		app.get('/service/:name/:message', function(request, response) {
+
+			try {
+
+				var name    = request.params.name;
+				var message = request.params.message;
+				var context = request.body;
+
+				debug('Service message', message, 'to service', name, 'context', context);
+
+				var service = services.findByName(name);
+
+				if (service != undefined) {
+					service.emit(message, context).then(function(result) {
+						response.status(200).json(result);
+					})
+					.catch(function(error) {
+						response.status(401).json({error:error.message});
+					});
+
+				}
+				else
+					throw Error('Service not found');
+
+			}
+			catch(error) {
+				console.log('Posting failed', error);
+				response.status(401).json({error:error.message});
+
+			}
+		});
+
 
 
 		function registerService(serviceName, methods, events) {
