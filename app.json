@@ -1,11 +1,11 @@
 
 {
 	"namespaces": {
-		"hzeller-matrix-64x32": {
+		"matrix-64x32": {
 			"methods"  : ["cancel", "clear", "stop", "text", "perlin", "rain", "stop", "emoji", "animation"],
 			"events"   : ["idle", "running"]
 		},
-		"hzeller-matrix-32x32": {
+		"matrix-32x32": {
 			"methods"  : ["cancel", "clear", "stop", "text", "perlin", "rain", "stop", "emoji", "animation"],
 			"events"   : ["idle", "running"]
 		},
