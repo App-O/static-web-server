@@ -172,7 +172,7 @@ var App = function(argv) {
 		app.get('/service/:name/:message', function(request, response) {
 
 			try {
-				console.log('request params', request.params);
+				console.log('request params', request.query);
 
 				var name    = request.params.name;
 				var message = request.params.message;
