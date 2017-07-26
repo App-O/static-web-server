@@ -8,7 +8,8 @@ var app = express();
 var mkpath = require('yow').mkpath;
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
-var sprintf = require('yow').sprintf;
+var sprintf = require('yow/sprintf');
+var extend = require('yow/extend');
 var isFunction = require('yow/is').isFunction;
 var redirectLogs = require('yow').redirectLogs;
 var prefixLogs = require('yow').prefixLogs;
@@ -141,11 +142,11 @@ var App = function(argv) {
 
 			try {
 
-				console.log('body:', request.body);
-				console.log('query:', request.query);
 				var name    = request.params.name;
 				var message = request.params.message;
-				var context = request.body;
+				var context = {};
+
+				extend(context, request.body, request.query);
 
 				debug('Service message', message, 'to service', name, 'context', context);
 
@@ -176,7 +177,9 @@ var App = function(argv) {
 			try {
 				var name    = request.params.name;
 				var message = request.params.message;
-				var context = request.query;
+				var context = {};
+
+				extend(context, request.body, request.query);
 
 				debug('Service message', message, 'to service', name, 'context', context);
 
