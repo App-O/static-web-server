@@ -14,7 +14,7 @@
 			"events"   : ["color-changed"]
 		},
 		"tellstick": {
-			"methods"  : ["turnOn", "turnOff", "bell", "devices"],
+			"methods"  : ["turnOn", "turnOff", "bell", "devices", "setState"],
 			"events"   : ["status"]
 		}
 
