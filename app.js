@@ -141,6 +141,8 @@ var App = function(argv) {
 
 			try {
 
+				console.log('body:', request.body);
+				console.log('query:', request.query);
 				var name    = request.params.name;
 				var message = request.params.message;
 				var context = request.body;
