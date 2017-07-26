@@ -99,11 +99,12 @@ var Services = function() {
 
 var App = function(argv) {
 
-	argv = parseArgs();
 	var services = new Services();
+	var debug = true;
 
 	function debug() {
-		console.log.apply(this, arguments);
+		if (debug)
+			console.log.apply(this, arguments);
 	}
 
 	function parseArgs() {
@@ -111,10 +112,10 @@ var App = function(argv) {
 		var args = require('yargs');
 
 		args.usage('Usage: $0 [options]');
-		args.help('h').alias('h', 'help');
 
-		args.option('p', {alias:'port', describe:'Listen to specified port', default:80});
-		args.option('r', {alias:'root', describe:'Specifies root path', default:'www'});
+		args.help('help').alias('help', 'h');
+		args.option('port', {alias:'p', describe:'Listen to specified port', default:80});
+		args.option('root', {alias:'r', describe:'Specifies root path', default:'www'});
 
 		args.wrap(null);
 
@@ -126,9 +127,8 @@ var App = function(argv) {
 	}
 
 
-	function run() {
+	function run(argv) {
 
-		parseArgs();
 		prefixLogs();
 
 		var path = Path.resolve(argv.root);
@@ -138,35 +138,6 @@ var App = function(argv) {
 		app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
 		app.use(bodyParser.json({limit: '50mb'}));
 
-		function emit(socket, message, context) {
-			return new Promise(function(resolve, reject) {
-
-				var timer = setTimeout(expired, 10000);
-
-				function expired() {
-					timer = undefined;
-					reject(new Error(sprintf('Timeout emitting event \'%s\'', message)));
-				}
-
-				socket.emit(message, context, function(data) {
-					try {
-						if (timer != undefined) {
-							clearTimeout(timer);
-
-							if (data.error)
-								throw new Error(data.error);
-							else
-								resolve(data);
-
-						}
-					}
-					catch(error) {
-						reject(error);
-					}
-				});
-
-			});
-		}
 
 		app.post('/service/:name/:message', function(request, response) {
 
@@ -176,7 +147,7 @@ var App = function(argv) {
 				var message = request.params.message;
 				var context = request.body;
 
-				console.log('Service message', message, 'to service', name, 'context', context);
+				debug('Service message', message, 'to service', name, 'context', context);
 
 				var service = services.findByName(name);
 
@@ -219,7 +190,7 @@ var App = function(argv) {
 				});
 
 				events.forEach(function(event) {
-					console.log('Defining event \'%s::%s\'.', serviceName, event);
+					debug('Defining event \'%s::%s\'.', serviceName, event);
 
 					socket.on(event, function(params) {
 						namespace.emit(event, params);
@@ -267,76 +238,6 @@ var App = function(argv) {
 
 
 
-		function registerServiceOOOLLLDD(provider, consumer, methods, events) {
-
-			var providerNamespace = io.of('/' + provider);
-			var consumerNamespace = io.of('/' + consumer);
-
-			providerNamespace.on('connection', function(socket) {
-				console.log('New provider socket connection', socket.id);
-
-
-				debug('Service %s connected...', provider);
-				serviceMap[provider] = socket;
-
-				socket.on('disconnect', function() {
-					debug('Service %s disconnected.', provider);
-					delete serviceMap[provider];
-				});
-
-				events.forEach(function(event) {
-					console.log('Defining event \'%s::%s\'.', provider, event);
-
-					socket.on(event, function(params) {
-						consumerNamespace.emit(event, params);
-					});
-
-				});
-
-			});
-
-			consumerNamespace.on('connection', function(socket) {
-				console.log('New consumer socket connection', socket.id);
-
-				methods.forEach(function(method) {
-					console.log('Defining method \'%s::%s\'.', consumer, method);
-
-					socket.on(method, function(params, fn) {
-
-						var providerSocket = serviceMap[provider];
-
-						if (providerSocket != undefined) {
-							emit(providerSocket, method, params).then(function(reply) {
-								if (isFunction(fn))
-									fn(reply);
-							})
-							.catch(function(error) {
-								console.log(error);
-
-								if (isFunction(fn))
-									fn({error:error.message});
-							});
-
-						}
-						else {
-							console.log('Service', provider, 'not found.');
-
-							if (isFunction(fn))
-								fn({error:sprintf('Service %s not found.', provider)});
-
-						}
-
-					});
-
-
-				});
-
-			});
-
-		}
-
-
-
 		function registerServices() {
 			for (var key in config.namespaces) {
 				var entry = config.namespaces[key];
@@ -358,7 +259,7 @@ var App = function(argv) {
 
 	}
 
-	run();
+	run(parseArgs());
 };
 
 
