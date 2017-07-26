@@ -100,11 +100,9 @@ var Services = function() {
 var App = function(argv) {
 
 	var services = new Services();
-	var debug = true;
 
 	function debug() {
-		if (debug)
-			console.log.apply(this, arguments);
+		console.log.apply(this, arguments);
 	}
 
 	function parseArgs() {
