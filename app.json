@@ -10,7 +10,7 @@
 			"events"   : ["idle", "running"]
 		},
 		"neopixel-lamp": {
-			"methods"  : ["colorize"],
+			"methods"  : ["colorize", "reset"],
 			"events"   : ["color-changed"]
 		},
 		"tellstick": {
