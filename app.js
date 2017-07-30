@@ -219,7 +219,7 @@ var App = function(argv) {
 
 				socket.on('i-am-the-provider', function() {
 					debug('Service %s connected...', serviceName);
-					services.add(new Service(socket, serviceName, 10000));
+					services.add(new Service(socket, serviceName, 30000));
 
 				});
 
