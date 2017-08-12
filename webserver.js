@@ -156,7 +156,6 @@ var App = function(argv) {
 						options.user     = context.user;
 						options.password = context.password;
 						options.database = database;
-						options.connectTimeout = 5000;
 
 						var mysql = MySQL.createConnection(options);
 
