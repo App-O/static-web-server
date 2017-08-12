@@ -15,7 +15,7 @@ var redirectLogs = require('yow').redirectLogs;
 var prefixLogs = require('yow').prefixLogs;
 var bodyParser = require('body-parser');
 var cors = require('cors');
-var config = require('./app.json');
+var config = require('./webserver.json');
 
 var Service = function(socket, name, timeout) {
 
