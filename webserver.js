@@ -207,7 +207,8 @@ var App = function(argv) {
 					});
 				})
 				.catch(function(error) {
-					throw error;
+					response.status(401).json({error:error.message});
+
 				})
 			}
 			catch(error) {
