@@ -137,6 +137,83 @@ var App = function(argv) {
 		app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }));
 		app.use(bodyParser.json({limit: '50mb'}));
 
+		app.get('/mysql/:database', function(request, response) {
+
+			try {
+				var MySQL = require('mysql');
+
+				var database  = request.params.name;
+				var context   = extend({}, request.body, request.query);
+
+				function connect() {
+
+					return new Promise(function(resolve, reject) {
+
+						var options = {};
+						options.host     = 'app-o.se';
+						options.user     = context.user;
+						options.password = context.password;
+						options.database = database;
+
+						var mysql = MySQL.createConnection(options);
+
+						mysql.connect(function(error) {
+							if (error) {
+								reject(error);
+							}
+							else {
+								resolve(mysql);
+							}
+
+						});
+					});
+
+				}
+
+				function query(mysql) {
+
+					return new Promise(function(resolve, reject) {
+
+						var options = context.query;
+
+						if (isString(options)) {
+							options = {sql:options};
+						}
+
+						var query = mysql.query(options, function(error, results, fields) {
+							if (error)
+								reject(error);
+							else
+								resolve(results);
+						});
+
+
+					});
+				}
+
+				connect().then(function(mysql) {
+
+					query(mysql).then(function(result) {
+						response.status(200).json(result);
+					})
+					.catch(function(error) {
+						response.status(401).json({error:error.message});
+					})
+					.then(function() {
+						mysql.end();
+					});
+				})
+				.catch(function(error) {
+					throw error;
+				})
+			}
+			catch(error) {
+				response.status(401).json({error:error.message});
+
+			}
+		});
+
+
 
 		app.post('/service/:name/:message', function(request, response) {
 

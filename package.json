@@ -15,6 +15,7 @@
     "console-stamp": "^0.2.3",
     "cors": "^2.8.4",
     "express": "^4.14.0",
+    "mysql": "^2.14.1",
     "optimist": "^0.6.1",
     "socket.io": "^1.4.8",
     "socket.io-client": "^1.4.8",
