@@ -12,6 +12,7 @@ var io = require('socket.io')(server);
 var sprintf = require('yow/sprintf');
 var extend = require('yow/extend');
 var isFunction = require('yow/is').isFunction;
+var isString = require('yow/is').isString;
 var redirectLogs = require('yow').redirectLogs;
 var prefixLogs = require('yow').prefixLogs;
 var bodyParser = require('body-parser');
