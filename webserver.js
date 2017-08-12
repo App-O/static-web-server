@@ -144,7 +144,7 @@ var App = function(argv) {
 			try {
 				var MySQL = require('mysql');
 
-				var database  = request.params.name;
+				var database  = request.params.database;
 				var context   = extend({}, request.body, request.query);
 
 				function connect() {
