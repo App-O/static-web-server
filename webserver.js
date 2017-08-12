@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+require('dotenv').config();
 
 var fs = require('fs');
 var Path = require('path');
@@ -113,8 +114,8 @@ var App = function(argv) {
 		args.usage('Usage: $0 [options]');
 
 		args.help('help').alias('help', 'h');
-		args.option('port', {alias:'p', describe:'Listen to specified port', default:80});
-		args.option('root', {alias:'r', describe:'Specifies root path', default:'www'});
+		args.option('port', {alias:'p', describe:'Listen to specified port', default:parseInt(process.env.WEBSERVER_PORT)});
+		args.option('root', {alias:'r', describe:'Specifies root path', default:process.env.WEBSERVER_ROOT});
 
 		args.wrap(null);
 
