@@ -18,7 +18,7 @@
 			"events"   : ["color-changed"]
 		},
 		"word-clock": {
-			"methods"  : ["colorize", "reset"],
+			"methods"  : ["colorize", "reset", "show"],
 			"events"   : ["time-changed"]
 		},
 		"tellstick": {
