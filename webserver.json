@@ -17,6 +17,10 @@
 			"methods"  : ["colorize", "reset"],
 			"events"   : ["color-changed"]
 		},
+		"word-clock": {
+			"methods"  : ["colorize", "reset"],
+			"events"   : ["time-changed"]
+		},
 		"tellstick": {
 			"methods"  : ["turnOn", "turnOff", "bell", "devices", "setState"],
 			"events"   : ["status"]
