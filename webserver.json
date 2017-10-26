@@ -17,6 +17,10 @@
 			"methods"  : ["colorize", "reset"],
 			"events"   : ["color-changed"]
 		},
+		"rgb-globe": {
+			"methods"  : ["colorize"],
+			"events"   : ["color-changed"]
+		},
 		"word-clock": {
 			"methods"  : ["colorize", "reset", "show"],
 			"events"   : ["time-changed"]
