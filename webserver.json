@@ -14,11 +14,7 @@
 			"events"   : ["idle", "running"]
 		},
 		"neopixel-lamp": {
-			"methods"  : ["colorize", "reset"],
-			"events"   : ["color-changed"]
-		},
-		"rgb-globe": {
-			"methods"  : ["colorize"],
+			"methods"  : ["colorize", "random"],
 			"events"   : ["color-changed"]
 		},
 		"neopixel-globe": {
