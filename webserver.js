@@ -291,6 +291,8 @@ var App = function(argv) {
 
 			var namespace = io.of('/' + serviceName);
 
+			console.log('Registering service ', serviceName, ', methods: ', methods, ', events: ', events);
+
 			namespace.on('connection', function(socket) {
 
 				socket.on('disconnect', function() {
