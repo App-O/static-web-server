@@ -18,7 +18,7 @@
 			"events"   : ["color-changed"]
 		},
 		"neopixel-globe": {
-			"methods"  : ["colorize"],
+			"methods"  : ["colorize", "blink", "pulse", "clock", "flash"],
 			"events"   : ["color-changed"]
 		},
 		"word-clock": {
