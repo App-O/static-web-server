@@ -79,10 +79,19 @@ var Services = function() {
 	var _this = this;
 	var _services = [];
 
-	_this.findByName = function(name) {
-		return _services.find(function(service) {
-			return service.name == name;
-		});
+	_this.findByName = function(name, room) {
+		if (room == undefined) {
+			return _services.find(function(service) {
+				return service.name == name;
+			});
+
+		}
+		else {
+			return _services.find(function(service) {
+				return service.name == name && service.room == room;
+			});
+
+		}
 	}
 
 	_this.findByID = function(id) {
@@ -243,6 +252,41 @@ var App = function(argv) {
 				debug('Service message', message, 'to service', name, 'context', context);
 
 				var service = services.findByName(name);
+
+				if (service != undefined) {
+					service.emit(message, context).then(function(result) {
+						response.status(200).json(result);
+					})
+					.catch(function(error) {
+						response.status(401).json({error:error.message});
+					});
+
+				}
+				else
+					throw Error('Service not found');
+
+			}
+			catch(error) {
+				console.log('Posting failed', error);
+				response.status(401).json({error:error.message});
+
+			}
+		});
+
+		app.post('/service/:name/:room/:message', function(request, response) {
+
+			try {
+
+				var name    = request.params.name;
+				var room    = request.params.room;
+				var message = request.params.message;
+				var context = {};
+
+				extend(context, request.body, request.query);
+
+				debug('Service message', message, 'to service', name, room, 'context', context);
+
+				var service = services.findByName(name, room);
 
 				if (service != undefined) {
 					service.emit(message, context).then(function(result) {
