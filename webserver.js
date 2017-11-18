@@ -43,25 +43,31 @@ var Service = function(socket, name, room, timeout) {
 
 			var socket = _this.socket;
 
-			if (_this.room)
-				socket = _this.socket.to(_this.room);
+			if (_this.room) {
+				socket.to(_this.room).emit(message, context);
+				resolve({status:'OK'});
 
-			socket.emit(message, context, function(data) {
-				try {
-					if (timer != undefined) {
-						clearTimeout(timer);
+			}
+			else {
+				socket.emit(message, context, function(data) {
+					try {
+						if (timer != undefined) {
+							clearTimeout(timer);
 
-						if (data.error)
-							throw new Error(data.error);
-						else
-							resolve(data);
+							if (data.error)
+								throw new Error(data.error);
+							else
+								resolve(data);
 
+						}
 					}
-				}
-				catch(error) {
-					reject(error);
-				}
-			});
+					catch(error) {
+						reject(error);
+					}
+				});
+
+			}
+
 
 		});
 	}
