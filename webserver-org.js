@@ -19,17 +19,16 @@ var bodyParser = require('body-parser');
 var cors = require('cors');
 var config = require('./webserver.json');
 
-var Service = function(socket, name, room, timeout) {
+var Service = function(socket, name, timeout) {
 
 	var _this = this;
 
 	_this.name    = name;
 	_this.socket  = socket;
-	_this.room    = room;
 	_this.id      = socket.id;
 	_this.timeout = timeout == undefined ? 5000 : timeout;
 
-	console.log('New service', _this.name, _this.room, _this.id);
+	console.log('New service', _this.name, _this.id);
 
 	_this.emit = function(message, context) {
 		return new Promise(function(resolve, reject) {
@@ -41,12 +40,7 @@ var Service = function(socket, name, room, timeout) {
 				reject(new Error(sprintf('Timeout emitting event \'%s\'', message)));
 			}
 
-			var socket = _this.socket;
-
-			if (_this.room)
-				socket = _this.socket.to(_this.room);
-
-			socket.emit(message, context, function(data) {
+			_this.socket.emit(message, context, function(data) {
 				try {
 					if (timer != undefined) {
 						clearTimeout(timer);
@@ -305,15 +299,9 @@ var App = function(argv) {
 					services.removeByID(socket.id);
 				});
 
-				socket.on('i-am-the-provider', function(roomName) {
-					debug('Service %s connected...', serviceName, roomName);
-					services.add(new Service(socket, serviceName, roomName, 30000));
-
-					if (roomName) {
-						debug('Joining room', roomName);
-						socket.join(roomName);
-
-					}
+				socket.on('i-am-the-provider', function() {
+					debug('Service %s connected...', serviceName);
+					services.add(new Service(socket, serviceName, 30000));
 
 				});
 
