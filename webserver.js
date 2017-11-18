@@ -284,7 +284,7 @@ var App = function(argv) {
 
 				extend(context, request.body, request.query);
 
-				debug('Service message', message, 'to service', name, room, 'context', context);
+				debug('Service message', message, 'to service', name, 'room', room, 'context', context);
 
 				var service = services.findByName(name, room);
 
