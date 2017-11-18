@@ -19,17 +19,16 @@ var bodyParser = require('body-parser');
 var cors = require('cors');
 var config = require('./webserver.json');
 
-var Service = function(socket, name, room, timeout) {
+var Service = function(socket, name, timeout) {
 
 	var _this = this;
 
 	_this.name    = name;
 	_this.socket  = socket;
-	_this.room    = room;
 	_this.id      = socket.id;
 	_this.timeout = timeout == undefined ? 5000 : timeout;
 
-	console.log('New service', _this.name, _this.room, _this.id);
+	console.log('New service', _this.name, _this.id);
 
 	_this.emit = function(message, context) {
 		return new Promise(function(resolve, reject) {
@@ -41,33 +40,22 @@ var Service = function(socket, name, room, timeout) {
 				reject(new Error(sprintf('Timeout emitting event \'%s\'', message)));
 			}
 
-			var socket = _this.socket;
+			_this.socket.emit(message, context, function(data) {
+				try {
+					if (timer != undefined) {
+						clearTimeout(timer);
 
-			if (_this.room) {
-				socket.to(_this.room).emit(message, context);
-				resolve({status:'OKIDOKI'});
+						if (data.error)
+							throw new Error(data.error);
+						else
+							resolve(data);
 
-			}
-			else {
-				socket.emit(message, context, function(data) {
-					try {
-						if (timer != undefined) {
-							clearTimeout(timer);
-
-							if (data.error)
-								throw new Error(data.error);
-							else
-								resolve(data);
-
-						}
 					}
-					catch(error) {
-						reject(error);
-					}
-				});
-
-			}
-
+				}
+				catch(error) {
+					reject(error);
+				}
+			});
 
 		});
 	}
@@ -79,19 +67,10 @@ var Services = function() {
 	var _this = this;
 	var _services = [];
 
-	_this.findByName = function(name, room) {
-		if (room == undefined) {
-			return _services.find(function(service) {
-				return service.name == name;
-			});
-
-		}
-		else {
-			return _services.find(function(service) {
-				return service.name == name && service.room == room;
-			});
-
-		}
+	_this.findByName = function(name) {
+		return _services.find(function(service) {
+			return service.name == name;
+		});
 	}
 
 	_this.findByID = function(id) {
@@ -273,41 +252,6 @@ var App = function(argv) {
 			}
 		});
 
-		app.post('/service/:name/:room/:message', function(request, response) {
-
-			try {
-
-				var name    = request.params.name;
-				var room    = request.params.room;
-				var message = request.params.message;
-				var context = {};
-
-				extend(context, request.body, request.query);
-
-				debug('Service message', message, 'to service', name, 'room', room, 'context', context);
-
-				var service = services.findByName(name, room);
-
-				if (service != undefined) {
-					service.emit(message, context).then(function(result) {
-						response.status(200).json(result);
-					})
-					.catch(function(error) {
-						response.status(401).json({error:error.message});
-					});
-
-				}
-				else
-					throw Error('Service not found');
-
-			}
-			catch(error) {
-				console.log('Posting failed', error);
-				response.status(401).json({error:error.message});
-
-			}
-		});
-
 		app.get('/service/:name/:message', function(request, response) {
 
 			try {
@@ -355,15 +299,9 @@ var App = function(argv) {
 					services.removeByID(socket.id);
 				});
 
-				socket.on('i-am-the-provider', function(roomName) {
-					debug('Service %s connected...', serviceName, roomName);
-					services.add(new Service(socket, serviceName, roomName, 30000));
-
-					if (roomName) {
-						debug('Joining room', roomName);
-						socket.join(roomName);
-
-					}
+				socket.on('i-am-the-provider', function() {
+					debug('Service %s connected...', serviceName);
+					services.add(new Service(socket, serviceName, 30000));
 
 				});
 
