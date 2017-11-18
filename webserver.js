@@ -45,7 +45,7 @@ var Service = function(socket, name, room, timeout) {
 
 			if (_this.room) {
 				socket.to(_this.room).emit(message, context);
-				resolve({status:'OK'});
+				resolve({status:'OKIDOKI'});
 
 			}
 			else {
