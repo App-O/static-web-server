@@ -353,7 +353,7 @@ var App = function(argv) {
 					namespace.to(id).emit(event, params);
 				});
 
-				socket.on(method, function(id, method, params, fn) {
+				socket.on('invoke', function(id, method, params, fn) {
 
 					var service = services.findByName(id);
 
