@@ -330,6 +330,8 @@ var App = function(argv) {
 
 			namespace.on('connection', function(socket) {
 
+				debug('New Neopixel connection!!!!!!!!!!!!!!!!!!!');
+
 				socket.on('disconnect', function() {
 					services.removeByID(socket.id);
 				});
@@ -349,7 +351,11 @@ var App = function(argv) {
 
 					services.add(service);
 
+					//namespace.removeAllListeners();
+
 					namespace.on('connection', function(socket) {
+
+						debug('New Neopixel client connection*******************');
 
 						events.forEach(function(event) {
 							debug('Defining event \'%s::%s\'.', instanceName, event);
