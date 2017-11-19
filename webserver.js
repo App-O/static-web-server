@@ -103,7 +103,6 @@ var Services = function() {
 var App = function(argv) {
 
 	var services = new Services();
-	var neopixels = new Services();
 
 	function debug() {
 		console.log.apply(this, arguments);
@@ -290,7 +289,7 @@ var App = function(argv) {
 		function registerNeopixels() {
 
 			var namespace = io.of('/neopixels');
-			var services  = neopixels;
+			var services = new Services();
 
 			debug('Registering neopixels service...');
 
@@ -335,51 +334,68 @@ var App = function(argv) {
 					services.removeByID(socket.id);
 				});
 
-				socket.on('i-am-the-provider', function(id) {
-					debug('Neopixels provider connected...');
+				socket.on('register', function(instanceName, methods, events) {
+					methods = methods || [];
+					events  = events  || [];
 
-					if (id == undefined)
-						debug('Invalid neopixels id');
-					else
-						services.add(new Service(socket, id, 30000));
+					debug('Neopixels provider connected...', instanceName, methods, events);
 
-				});
 
-				socket.on('join', function(id) {
-					socket.join(id);
-				});
+					if (instanceName == undefined)
+						throw new Error('Invalid neopixels instance name');
 
-				socket.on('emit', function(id, event, params) {
-					namespace.to(id).emit(event, params);
-				});
+					var namespace = io.of(sprintf('/neopixels-%s', instanceName));
+					var service = new Service(socket, instanceName, 30000);
 
-				socket.on('invoke', function(id, method, params, fn) {
+					services.add(service);
 
-					var service = services.findByName(id);
+					namespace.on('connection', function(socket) {
 
-					if (service != undefined) {
-						service.emit(method, params).then(function(reply) {
-							if (isFunction(fn))
-								fn(reply);
-						})
-						.catch(function(error) {
-							console.log(error);
+						events.forEach(function(event) {
+							debug('Defining event \'%s::%s\'.', instanceName, event);
 
-							if (isFunction(fn))
-								fn({error:error.message});
+							socket.on(event, function(params) {
+								namespace.emit(event, params);
+							});
+
 						});
 
-					}
-					else {
-						console.log('Neopixels', id, 'not found.');
+						methods.forEach(function(method) {
+							console.log('Defining method \'%s::%s\'.', instanceName, method);
 
-						if (isFunction(fn))
-							fn({error:sprintf('Neopixels %s not found.', id)});
+							socket.on(method, function(params, fn) {
 
-					}
+								var service = services.findByName(instanceName);
+
+								if (service != undefined) {
+									service.emit(method, params).then(function(reply) {
+										if (isFunction(fn))
+											fn(reply);
+									})
+									.catch(function(error) {
+										console.log(error);
+
+										if (isFunction(fn))
+											fn({error:error.message});
+									});
+
+								}
+								else {
+									console.log('Instance', instanceName, 'not found.');
+
+									if (isFunction(fn))
+										fn({error:sprintf('Instance %s not found.', instanceName)});
+
+								}
+
+							});
+
+
+						});
+
+					});
 
 				});
-
 
 
 
