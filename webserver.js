@@ -353,11 +353,12 @@ var App = function(argv) {
 					services.add(service);
 
 					namespace.on('connection', function(socket) {
-						var instanceName = socket.handshake.query.instance;
+						/*var instanceName = socket.handshake.query.instance;
 
 						if (instanceName != socket.handshake.query.instance) {
 							return;
 						}
+						*/
 
 						debug('New Neopixel client connection', instanceName);
 
