@@ -353,18 +353,18 @@ var App = function(argv) {
 					services.add(service);
 
 					namespace.on('connection', function(socket) {
-						/*var instanceName = socket.handshake.query.instance;
+						var instanceName = socket.handshake.query.instance;
+						debug('**************New Neopixel client connection', instanceName);
 
-						if (instanceName != socket.handshake.query.instance) {
-							return;
-						}
-						*/
+						//if (instanceName != socket.handshake.query.instance) {
+							//return;
+						//}
 
-						debug('New Neopixel client connection', instanceName);
 
-						socket.join(instanceName);
 
-						debug('New Neopixel client connection*******************');
+						if (instanceName)
+							socket.join(instanceName);
+
 
 						events.forEach(function(event) {
 							debug('Defining event \'%s::%s\'.', instanceName, event);
