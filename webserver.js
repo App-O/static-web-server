@@ -28,8 +28,6 @@ var Service = function(socket, name, timeout) {
 	_this.id      = socket.id;
 	_this.timeout = timeout == undefined ? 5000 : timeout;
 
-	console.log('New service', _this.name, _this.id);
-
 	_this.emit = function(message, context) {
 		return new Promise(function(resolve, reject) {
 
@@ -330,6 +328,15 @@ var App = function(argv) {
 
 			namespace.on('connection', function(socket) {
 
+
+				if (isString(socket.handshake.query.instance)) {
+					var instanceName = socket.handshake.query.instance;
+					var service = services.findByName(name);
+
+					if (service == undefined) {
+						debug('************************** SERVICE NOT FOUND ************');
+					}
+				}
 
 				socket.on('disconnect', function() {
 					debug('Service disconnected.', socket.handshake.query.instance);
