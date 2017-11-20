@@ -491,7 +491,7 @@ var App = function(argv) {
 			console.log('Listening on port %d...', argv.port);
 
 			registerNeopixels();
-			registerServices();
+			//registerServices();
 
 		});
 
