@@ -331,15 +331,10 @@ var App = function(argv) {
 			namespace.on('connection', function(socket) {
 
 				var instanceName = socket.handshake.query.instance;
+				debug('New Neopixel service connection.', instanceName);
 
-				if (instanceName != undefined) {
-					debug('INSTANCE SPECIFIEDF', instanceName);
-					return;
-
-				}
-
-				debug('New Neopixel service connection.');
-
+				//if (instanceName)
+					//socket.join(instanceName);
 
 				socket.on('disconnect', function() {
 					debug('Service disconnected.')
@@ -366,12 +361,14 @@ var App = function(argv) {
 						var instanceName = socket.handshake.query.instance;
 
 						if (instanceName == undefined) {
-							debug('NO INSTANCE SPECIFIEFD');
 							return;
 						}
+						
 						debug('New Neopixel client connection', instanceName);
 
 						socket.join(instanceName);
+
+						debug('New Neopixel client connection*******************');
 
 						events.forEach(function(event) {
 							debug('Defining event \'%s::%s\'.', instanceName, event);
