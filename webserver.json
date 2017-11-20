@@ -25,10 +25,6 @@
 			"methods"  : ["color", "blink", "pulse", "clock", "flash", "random"],
 			"events"   : ["color-changed"]
 		},
-		"neopixels": {
-			"methods"  : ["color", "blink", "pulse", "clock", "flash", "random"],
-			"events"   : ["changed"]
-		},
 		"word-clock": {
 			"methods"  : ["colorize", "reset", "show"],
 			"events"   : ["time-changed"]
