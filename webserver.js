@@ -331,7 +331,7 @@ var App = function(argv) {
 
 				if (isString(socket.handshake.query.instance)) {
 					var instanceName = socket.handshake.query.instance;
-					var service = services.findByName(name);
+					var service = services.findByName(instanceName);
 
 					if (service == undefined) {
 						debug('************************** SERVICE NOT FOUND ************');
