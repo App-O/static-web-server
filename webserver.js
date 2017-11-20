@@ -433,9 +433,12 @@ var App = function(argv) {
 
 			namespace.on('connection', function(socket) {
 
-				console.log('QUERY:', socket.handshake.query);
-				
-				var instanceName = isString(socket.handshake.query.instance) ? sprintf('%s.%s', serviceName, socket.handshake.query.instance) : serviceName;
+				var instance = socket.handshake.query.instance;
+				var instanceName = isString(instance) ? sprintf('%s.%s', serviceName, instance) : serviceName;
+
+				if (isString(instance)) {
+					socket.join(instance);
+				}
 
 				socket.on('disconnect', function() {
 					services.removeByID(socket.id);
@@ -450,9 +453,17 @@ var App = function(argv) {
 				events.forEach(function(event) {
 					debug('Defining event \'%s::%s\'.', instanceName, event);
 
-					socket.on(event, function(params) {
-						namespace.emit(event, params);
-					});
+					if (isString(instance)) {
+						socket.on(event, function(params) {
+							namespace.to(instance).emit(event, params);
+						});
+
+					}
+					else {
+						socket.on(event, function(params) {
+							namespace.emit(event, params);
+						});
+					}
 
 				});
 
