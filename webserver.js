@@ -332,8 +332,11 @@ var App = function(argv) {
 
 				var instanceName = socket.handshake.query.instance;
 
-				if (instanceName != undefined)
+				if (instanceName != undefined) {
+					debug('INSTANCE SPECIFIEDF', instanceName);
 					return;
+
+				}
 
 				debug('New Neopixel service connection.');
 
@@ -363,6 +366,7 @@ var App = function(argv) {
 						var instanceName = socket.handshake.query.instance;
 
 						if (instanceName == undefined) {
+							debug('NO INSTANCE SPECIFIEFD');
 							return;
 						}
 						debug('New Neopixel client connection', instanceName);
