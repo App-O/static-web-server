@@ -356,9 +356,9 @@ var App = function(argv) {
 						var instanceName = socket.handshake.query.instance;
 						debug('**************New Neopixel client connection', instanceName);
 
-						//if (instanceName != socket.handshake.query.instance) {
-							//return;
-						//}
+						if (instanceName != socket.handshake.query.instance) {
+							return;
+						}
 
 
 
