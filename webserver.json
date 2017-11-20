@@ -1,29 +1,9 @@
 
 {
 	"namespaces": {
-		"matrix": {
-			"methods"  : ["cancel", "clear", "stop", "text", "perlin", "rain", "stop", "emoji", "animation", "clock"],
-			"events"   : ["idle", "running"]
-		},
-		"neopixel-lamp": {
-			"methods"  : ["colorize", "random"],
-			"events"   : ["color-changed"]
-		},
-		"neopixel-globe": {
-			"methods"  : ["color", "blink", "pulse", "clock", "flash", "random"],
-			"events"   : ["color-changed"]
-		},
 		"neopixels": {
 			"methods"  : ["color", "blink", "pulse", "clock", "flash", "random"],
 			"events"   : ["changed"]
-		},
-		"word-clock": {
-			"methods"  : ["colorize", "reset", "show"],
-			"events"   : ["time-changed"]
-		},
-		"tellstick": {
-			"methods"  : ["turnOn", "turnOff", "bell", "devices", "setState"],
-			"events"   : ["status"]
 		}
 
 	}
