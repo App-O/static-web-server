@@ -507,8 +507,8 @@ var App = function(argv) {
 			console.log('Root path is %s.', path);
 			console.log('Listening on port %d...', argv.port);
 
-			registerNeopixels();
-			//registerServices();
+			//registerNeopixels();
+			registerServices();
 
 		});
 
