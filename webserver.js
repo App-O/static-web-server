@@ -335,7 +335,7 @@ var App = function(argv) {
 
 					if (service == undefined) {
 						debug('************************** SERVICE NOT FOUND ************');
-						socket.disconnect();
+//						socket.disconnect();
 					}
 				}
 
