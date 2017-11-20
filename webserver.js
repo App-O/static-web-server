@@ -332,7 +332,7 @@ var App = function(argv) {
 
 
 				socket.on('disconnect', function() {
-					debug('Service disconnected.')
+					debug('Service disconnected.', socket.handshake.query.instance);
 					services.removeByID(socket.id);
 				});
 
