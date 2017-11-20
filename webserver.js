@@ -330,12 +330,17 @@ var App = function(argv) {
 
 			namespace.on('connection', function(socket) {
 
-				debug('New Neopixel service.');
+				var instanceName = socket.handshake.query.instance;
+				debug('New Neopixel service connection.', instanceName);
+
+				if (instanceName)
+					socket.join(instanceName);
 
 				socket.on('disconnect', function() {
 					debug('Service disconnected.')
 					services.removeByID(socket.id);
 				});
+
 
 				socket.on('register', function(instanceName, methods, events) {
 					methods = methods || [];
@@ -347,12 +352,10 @@ var App = function(argv) {
 					if (instanceName == undefined)
 						throw new Error('Invalid neopixels instance name');
 
-					var namespace = io.of(sprintf('/neopixels-%s', instanceName));
+					//var namespace = io.of(sprintf('/neopixels-%s', instanceName));
 					var service = new Service(socket, instanceName, 30000);
 
 					services.add(service);
-
-					//namespace.removeAllListeners();
 
 					namespace.on('connection', function(socket) {
 
@@ -362,7 +365,7 @@ var App = function(argv) {
 							debug('Defining event \'%s::%s\'.', instanceName, event);
 
 							socket.on(event, function(params) {
-								namespace.emit(event, params);
+								namespace.to(instanceName).emit(event, params);
 							});
 
 						});
