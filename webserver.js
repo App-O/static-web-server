@@ -330,9 +330,10 @@ var App = function(argv) {
 
 			namespace.on('connection', function(socket) {
 
-				debug('New Neopixel connection!!!!!!!!!!!!!!!!!!!');
+				debug('New Neopixel service.');
 
 				socket.on('disconnect', function() {
+					debug('Service disconnected.')
 					services.removeByID(socket.id);
 				});
 
