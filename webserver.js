@@ -283,7 +283,7 @@ var App = function(argv) {
 			}
 		});
 
-
+/*
 		function registerNeopixels() {
 
 			var namespace = io.of('/neopixels');
@@ -362,14 +362,7 @@ var App = function(argv) {
 
 					namespace.on('connection', function(socket) {
 						debug('**************New Neopixel client connection', instanceName, socket.handshake.query.instance);
-/*
-						debug('**************New Neopixel client connection', instanceName, socket.handshake.query.instance);
 
-						if (instanceName != socket.handshake.query.instance) {
-							return;
-						}
-						var instanceName = socket.handshake.query.instance;
-*/
 
 
 						if (instanceName)
@@ -418,6 +411,8 @@ var App = function(argv) {
 
 						});
 
+						namespace.to(instanceName).emit('ready');
+
 					});
 
 				});
@@ -428,6 +423,7 @@ var App = function(argv) {
 
 		}
 
+*/
 
 		function registerService(serviceName, methods, events) {
 
@@ -437,18 +433,20 @@ var App = function(argv) {
 
 			namespace.on('connection', function(socket) {
 
+				var instanceName = isString(socket.handshake.query.instance) ? sprintf('%s.%s', serviceName, socket.handshake.query.instance) : serviceName;
+
 				socket.on('disconnect', function() {
 					services.removeByID(socket.id);
 				});
 
 				socket.on('i-am-the-provider', function() {
-					debug('Service %s connected...', serviceName);
-					services.add(new Service(socket, serviceName, 30000));
+					debug('Service %s connected...', instanceName);
+					services.add(new Service(socket, instanceName, 30000));
 
 				});
 
 				events.forEach(function(event) {
-					debug('Defining event \'%s::%s\'.', serviceName, event);
+					debug('Defining event \'%s::%s\'.', instanceName, event);
 
 					socket.on(event, function(params) {
 						namespace.emit(event, params);
@@ -457,11 +455,11 @@ var App = function(argv) {
 				});
 
 				methods.forEach(function(method) {
-					console.log('Defining method \'%s::%s\'.', serviceName, method);
+					console.log('Defining method \'%s::%s\'.', instanceName, method);
 
 					socket.on(method, function(params, fn) {
 
-						var service = services.findByName(serviceName);
+						var service = services.findByName(instanceName);
 
 						if (service != undefined) {
 							service.emit(method, params).then(function(reply) {
@@ -477,10 +475,10 @@ var App = function(argv) {
 
 						}
 						else {
-							console.log('Service', serviceName, 'not found.');
+							console.log('Service', instanceName, 'not found.');
 
 							if (isFunction(fn))
-								fn({error:sprintf('Service %s not found.', serviceName)});
+								fn({error:sprintf('Service %s not found.', instanceName)});
 
 						}
 
