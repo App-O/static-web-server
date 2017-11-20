@@ -433,6 +433,8 @@ var App = function(argv) {
 
 			namespace.on('connection', function(socket) {
 
+				console.log('QUERY:', socket.handshake.query);
+				
 				var instanceName = isString(socket.handshake.query.instance) ? sprintf('%s.%s', serviceName, socket.handshake.query.instance) : serviceName;
 
 				socket.on('disconnect', function() {
