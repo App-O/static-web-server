@@ -330,12 +330,6 @@ var App = function(argv) {
 
 			namespace.on('connection', function(socket) {
 
-				var instanceName = socket.handshake.query.instance;
-
-				if (instanceName != undefined)
-					return;
-				debug('New Neopixel service connection.');
-					//socket.join(instanceName);
 
 				socket.on('disconnect', function() {
 					debug('Service disconnected.')
@@ -361,7 +355,7 @@ var App = function(argv) {
 					namespace.on('connection', function(socket) {
 						var instanceName = socket.handshake.query.instance;
 
-						if (instanceName == undefined) {
+						if (instanceName != socket.handshake.query.instance) {
 							return;
 						}
 
