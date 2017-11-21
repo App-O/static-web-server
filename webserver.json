@@ -5,6 +5,10 @@
 			"methods"  : ["color", "blink", "pulse", "clock", "flash", "random"],
 			"events"   : ["changed"]
 		},
+		"matrix": {
+			"methods"  : ["cancel", "clear", "stop", "text", "perlin", "rain", "stop", "emoji", "animation", "clock"],
+			"events"   : ["idle", "running"]
+		},
 		"matrix-64x32": {
 			"methods"  : ["cancel", "clear", "stop", "text", "perlin", "rain", "stop", "emoji", "animation", "clock"],
 			"events"   : ["idle", "running"]
