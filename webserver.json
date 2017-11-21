@@ -9,18 +9,6 @@
 			"methods"  : ["cancel", "clear", "stop", "text", "perlin", "rain", "stop", "emoji", "animation", "clock"],
 			"events"   : ["idle", "running"]
 		},
-		"matrix-64x32": {
-			"methods"  : ["cancel", "clear", "stop", "text", "perlin", "rain", "stop", "emoji", "animation", "clock"],
-			"events"   : ["idle", "running"]
-		},
-		"matrix-32x32": {
-			"methods"  : ["cancel", "clear", "stop", "text", "perlin", "rain", "stop", "emoji", "animation", "clock"],
-			"events"   : ["idle", "running"]
-		},
-		"matrix-96x96": {
-			"methods"  : ["cancel", "clear", "stop", "text", "perlin", "rain", "stop", "emoji", "animation", "clock"],
-			"events"   : ["idle", "running"]
-		},
 		"neopixel-lamp": {
 			"methods"  : ["colorize", "random"],
 			"events"   : ["color-changed"]
