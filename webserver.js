@@ -6,17 +6,12 @@ var fs = require('fs');
 var Path = require('path');
 var express = require('express');
 var app = express();
-var mkpath = require('yow').mkpath;
-var server = require('http').Server(app);
-var io = require('socket.io')(server);
 var sprintf = require('yow/sprintf');
 var extend = require('yow/extend');
 var isFunction = require('yow/is').isFunction;
 var isString = require('yow/is').isString;
 var redirectLogs = require('yow').redirectLogs;
 var prefixLogs = require('yow').prefixLogs;
-var bodyParser = require('body-parser');
-var cors = require('cors');
 var config = require('./webserver.json');
 var SocketServer = require('./socket-server.js');
 
@@ -49,6 +44,8 @@ var App = function(argv) {
 
 
 	function run(argv) {
+
+		var bodyParser = require('body-parser');
 
 		prefixLogs();
 
@@ -136,6 +133,8 @@ var App = function(argv) {
 			}
 		});
 
+
+		var server = require('http').Server(app);
 
 
 		server.listen(argv.port, function () {
