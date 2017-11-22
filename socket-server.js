@@ -4,7 +4,6 @@ require('dotenv').config();
 
 var fs = require('fs');
 var Path = require('path');
-var io = require('socket.io')(server);
 var sprintf = require('yow/sprintf');
 var extend = require('yow/extend');
 var isFunction = require('yow/is').isFunction;
