@@ -99,9 +99,12 @@ var Services = function() {
 module.exports = class SocketServer {
 
 
-	constructor(app) {
+	constructor(server, app) {
+		this.server = server;
 		this.app = app;
+		this.io = require('socket.io')(server);
 		this.services = new Services();
+
 	}
 
 
@@ -153,7 +156,7 @@ module.exports = class SocketServer {
 
 	registerService(serviceName, methods, events) {
 
-		var namespace = io.of('/' + serviceName);
+		var namespace = this.io.of('/' + serviceName);
 		var services = this.services;
 
 		console.log('Registering service ', serviceName, ', methods: ', methods, ', events: ', events);
