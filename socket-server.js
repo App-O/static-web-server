@@ -93,7 +93,7 @@ module.exports = class SocketServer {
 	constructor(server, app) {
 		this.server = server;
 		this.app = app;
-		this.io = require('socket.io')(server);
+		this.io = require('socket.io')(app);
 		this.services = new Services();
 
 	}
