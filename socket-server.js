@@ -107,7 +107,7 @@ module.exports = class SocketServer {
 
 	constructor(app) {
 		this.app = app;
-		this.services = [];
+		this.services = new Services();
 	}
 
 
