@@ -152,7 +152,7 @@ module.exports = class SocketServer {
 
 		for (var key in config.namespaces) {
 			var entry = config.namespaces[key];
-			registerService(key, entry.methods, entry.events);
+			this.registerService(key, entry.methods, entry.events);
 		}
 
 	}
