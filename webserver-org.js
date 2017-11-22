@@ -28,8 +28,6 @@ var Service = function(socket, name, timeout) {
 	_this.id      = socket.id;
 	_this.timeout = timeout == undefined ? 5000 : timeout;
 
-	console.log('New service', _this.name, _this.id);
-
 	_this.emit = function(message, context) {
 		return new Promise(function(resolve, reject) {
 
@@ -103,7 +101,6 @@ var Services = function() {
 var App = function(argv) {
 
 	var services = new Services();
-	var neopixels = new Services();
 
 	function debug() {
 		console.log.apply(this, arguments);
@@ -287,107 +284,6 @@ var App = function(argv) {
 		});
 
 
-		function registerNeopixels() {
-
-			var namespace = io.of('/neopixels');
-			var services  = neopixels;
-
-			debug('Registering neopixels service...');
-
-
-			app.post('/neopixels/:name/:message', function(request, response) {
-
-				try {
-
-					var name    = request.params.name;
-					var message = request.params.message;
-					var context = {};
-
-					extend(context, request.body, request.query);
-
-					debug('Neopixel message', message, 'to service', name, 'context', context);
-
-					var service = services.findByName(name);
-
-					if (service != undefined) {
-						service.emit(message, context).then(function(result) {
-							response.status(200).json(result);
-						})
-						.catch(function(error) {
-							response.status(401).json({error:error.message});
-						});
-
-					}
-					else
-						throw Error('Service not found');
-
-				}
-				catch(error) {
-					console.log('Posting failed', error);
-					response.status(401).json({error:error.message});
-
-				}
-			});
-
-			namespace.on('connection', function(socket) {
-
-				socket.on('disconnect', function() {
-					services.removeByID(socket.id);
-				});
-
-				socket.on('i-am-the-provider', function(id) {
-					debug('Neopixels provider connected...');
-
-					if (id == undefined)
-						debug('Invalid neopixels id');
-					else
-						services.add(new Service(socket, id, 30000));
-
-				});
-
-				socket.on('join', function(id) {
-					socket.join(id);
-				});
-
-				socket.on('emit', function(id, event, params) {
-					namespace.to(id).emit(event, params);
-				});
-
-				socket.on(method, function(id, method, params, fn) {
-
-					var service = services.findByName(id);
-
-					if (service != undefined) {
-						service.emit(method, params).then(function(reply) {
-							if (isFunction(fn))
-								fn(reply);
-						})
-						.catch(function(error) {
-							console.log(error);
-
-							if (isFunction(fn))
-								fn({error:error.message});
-						});
-
-					}
-					else {
-						console.log('Neopixels', id, 'not found.');
-
-						if (isFunction(fn))
-							fn({error:sprintf('Neopixels %s not found.', id)});
-
-					}
-
-				});
-
-
-
-
-			});
-
-		}
-
-
 		function registerService(serviceName, methods, events) {
 
 			var namespace = io.of('/' + serviceName);
@@ -396,31 +292,46 @@ var App = function(argv) {
 
 			namespace.on('connection', function(socket) {
 
+				var instance = socket.handshake.query.instance;
+				var instanceName = isString(instance) ? sprintf('%s.%s', serviceName, instance) : serviceName;
+
+				if (isString(instance)) {
+					socket.join(instance);
+				}
+
 				socket.on('disconnect', function() {
 					services.removeByID(socket.id);
 				});
 
 				socket.on('i-am-the-provider', function() {
-					debug('Service %s connected...', serviceName);
-					services.add(new Service(socket, serviceName, 30000));
+					debug('Service %s connected...', instanceName);
+					services.add(new Service(socket, instanceName, 30000));
 
 				});
 
 				events.forEach(function(event) {
-					debug('Defining event \'%s::%s\'.', serviceName, event);
+					debug('Defining event \'%s::%s\'.', instanceName, event);
 
-					socket.on(event, function(params) {
-						namespace.emit(event, params);
-					});
+					if (isString(instance)) {
+						socket.on(event, function(params) {
+							namespace.to(instance).emit(event, params);
+						});
+
+					}
+					else {
+						socket.on(event, function(params) {
+							namespace.emit(event, params);
+						});
+					}
 
 				});
 
 				methods.forEach(function(method) {
-					console.log('Defining method \'%s::%s\'.', serviceName, method);
+					console.log('Defining method \'%s::%s\'.', instanceName, method);
 
 					socket.on(method, function(params, fn) {
 
-						var service = services.findByName(serviceName);
+						var service = services.findByName(instanceName);
 
 						if (service != undefined) {
 							service.emit(method, params).then(function(reply) {
@@ -436,10 +347,10 @@ var App = function(argv) {
 
 						}
 						else {
-							console.log('Service', serviceName, 'not found.');
+							console.log('Service', instanceName, 'not found.');
 
 							if (isFunction(fn))
-								fn({error:sprintf('Service %s not found.', serviceName)});
+								fn({error:sprintf('Service %s not found.', instanceName)});
 
 						}
 
@@ -468,7 +379,7 @@ var App = function(argv) {
 			console.log('Root path is %s.', path);
 			console.log('Listening on port %d...', argv.port);
 
-			registerNeopixels();
+			//registerNeopixels();
 			registerServices();
 
 		});
