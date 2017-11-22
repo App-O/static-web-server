@@ -172,7 +172,7 @@ module.exports = class SocketServer {
 			});
 
 			events.forEach(function(event) {
-				debug('Defining event \'%s::%s\'.', instanceName, event);
+				//debug('Defining event \'%s::%s\'.', instanceName, event);
 
 				if (isString(instance)) {
 					socket.on(event, function(params) {
@@ -189,7 +189,7 @@ module.exports = class SocketServer {
 			});
 
 			methods.forEach(function(method) {
-				console.log('Defining method \'%s::%s\'.', instanceName, method);
+				//console.log('Defining method \'%s::%s\'.', instanceName, method);
 
 				socket.on(method, function(params, fn) {
 
